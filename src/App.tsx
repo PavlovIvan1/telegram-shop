@@ -6,23 +6,22 @@ import { Home } from './pages/Home'
 
 export function App() {
 	return (
-		<>
-			<BrowserRouter>
-				<div style={{ paddingBottom: '70px', minHeight: '100vh' }}>
-					<Routes>
-						<Route path='/' element={<Home />} />
-						<Route path='/search' element={<Home />} />
-						<Route path='/favorites' element={<Favorites />} />
-					</Routes>
-				</div>
+		<BrowserRouter>
+			<div style={{ paddingBottom: '70px', minHeight: '100vh' }}>
+				<Routes>
+					<Route path='/' element={<Home />} />
+					<Route path='/search' element={<Home />} />
+					<Route path='/favorites' element={<Favorites />} />
+				</Routes>
+			</div>
 
-				<MobileNavbar />
-			</BrowserRouter>
+			<MobileNavbar />
+
 			<div>
 				<Button w={'100px'} h={'30px'}>
 					Hello
 				</Button>
 			</div>
-		</>
+		</BrowserRouter>
 	)
 }
