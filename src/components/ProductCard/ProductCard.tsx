@@ -7,11 +7,9 @@ export function ProductCard() {
 		<>
 			<div className={styles.card}>
 				<img src='/products/iphone-12-green.png' alt='' />
-				<div className={styles.card_info}>
-					<h3>Iphone 12</h3>
-					<span style={{ marginTop: '5px', marginBottom: '5px' }}>
-						124 000 р.
-					</span>
+				<div className={styles.card_info} style={{ marginBottom: '5px' }}>
+					<h3 style={{ marginBottom: '5px' }}>Iphone 12</h3>
+					<span>124 000 р.</span>
 				</div>
 				<Button>
 					<ArrowBigRight />
