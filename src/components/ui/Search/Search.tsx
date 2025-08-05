@@ -10,7 +10,7 @@ export function Search() {
 	const textColor = theme?.text_color || '#000000'
 	const hintColor = theme?.hint_color || '#999999'
 	const controlColor = theme?.button_color || '#007EE5'
-	const bgColor = theme?.bg_color || '#ffffff'
+	// const bgColor = theme?.bg_color || '#ffffff'
 	const secondaryBg = theme?.secondary_bg_color || '#f4f4f5'
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
