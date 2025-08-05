@@ -3,6 +3,7 @@
 }
 
 .card {
+	margin-top: 10px;
 	background: var(--tg-theme-secondary-bg-color);
 	min-width: 130px;
 	padding: 10px;
