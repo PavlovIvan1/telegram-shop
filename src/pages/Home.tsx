@@ -1,7 +1,9 @@
+import { Search } from '../components/ui/Search/Search'
+
 export function Home() {
 	return (
 		<>
-			<h1>Home</h1>
+			<Search />
 		</>
 	)
 }
