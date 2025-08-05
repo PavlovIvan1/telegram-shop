@@ -1,9 +1,9 @@
-import { Search } from '../components/ui/Search/Search'
+import { TopBar } from '../components/ui/TopBar/TopBar'
 
 export function Home() {
 	return (
 		<>
-			<Search />
+			<TopBar />
 		</>
 	)
 }
