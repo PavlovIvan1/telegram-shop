@@ -1,3 +1,7 @@
 export function Favorites() {
-	return <></>
+	return (
+		<>
+			<h1>Favorites</h1>
+		</>
+	)
 }
