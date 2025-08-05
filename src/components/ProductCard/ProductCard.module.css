@@ -1,11 +1,13 @@
 .card img {
-	width: 120px;
+	/* width: 120px; */
+	width: 100%;
 }
 
 .card {
 	margin-top: 10px;
 	background: var(--tg-theme-secondary-bg-color);
-	min-width: 130px;
+	/* min-width: 130px; */
+	width: 50%;
 	padding: 10px;
 	box-sizing: border-box;
 	border-radius: 0.8rem;
