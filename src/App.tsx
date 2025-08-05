@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import { MobileNavbar } from './components/section/navbar'
 import { Button } from './components/ui/Button/Button'
@@ -5,6 +6,14 @@ import { Favorites } from './pages/Favorites'
 import { Home } from './pages/Home'
 
 export function App() {
+	useEffect(() => {
+		// 🚀 Убедимся, что Telegram WebApp готов к навигации
+		if (window.Telegram?.WebApp) {
+			window.Telegram.WebApp.ready()
+			console.log('Telegram WebApp.ready() вызван')
+		}
+	}, [])
+
 	return (
 		<>
 			{/* Основной контент */}
