@@ -2,4 +2,5 @@
 	background: var(--tg-theme-button-color);
 	border: none;
 	padding: 10px;
+	border-radius: 1.5rem;
 }
