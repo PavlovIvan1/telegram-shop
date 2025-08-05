@@ -1,4 +1,5 @@
 // components/Search/Search.tsx
+import { SearchIcon } from 'lucide-react'
 import { useState } from 'react'
 import styles from './Search.module.css'
 
@@ -25,10 +26,10 @@ export function Search() {
 				}}
 			>
 				{/* Иконка лупы */}
-				<span className={styles.searchIcon} style={{ color: hintColor }}>
+				{/* <span className={styles.searchIcon} style={{ color: hintColor }}>
 					🔍
-				</span>
-
+				</span> */}
+				<SearchIcon size={18} color={hintColor} className={styles.searchIcon} />
 				{/* Поле ввода */}
 				<input
 					type='text'

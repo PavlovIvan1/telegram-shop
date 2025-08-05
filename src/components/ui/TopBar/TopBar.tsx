@@ -1,4 +1,5 @@
 // components/TopBar/TopBar.tsx
+import { ArrowDownUpIcon, Filter } from 'lucide-react'
 import { Search } from '../Search/Search'
 import styles from './TopBar.module.css'
 
@@ -33,8 +34,7 @@ export function TopBar() {
 					style={{ backgroundColor: secondaryBg }}
 					aria-label='Сортировка'
 				>
-					{/* Эмодзи или замени на SVG */}
-					<span style={{ color: iconColor }}>📋</span>
+					<ArrowDownUpIcon size={20} color={iconColor} />
 				</button>
 
 				<button
@@ -43,7 +43,7 @@ export function TopBar() {
 					style={{ backgroundColor: secondaryBg }}
 					aria-label='Фильтры'
 				>
-					<span style={{ color: iconColor }}>🎨</span>
+					<Filter size={20} color={iconColor} />
 				</button>
 			</div>
 		</div>

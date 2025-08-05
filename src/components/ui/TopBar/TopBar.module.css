@@ -3,9 +3,10 @@
 .topBar {
 	display: flex;
 	align-items: center;
-	gap: 12px;
+	gap: -12px;
 	padding: 8px 12px;
 	width: 100%;
+	box-sizing: border-box;
 }
 
 .searchSection {
