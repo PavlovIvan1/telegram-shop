@@ -1,12 +1,10 @@
-// src/types/telegram.d.ts
-
 export {}
 
 declare global {
 	interface Window {
 		Telegram?: {
 			WebApp: {
-				// Пример полей, которые могут быть
+				// --- Данные ---
 				themeParams: {
 					bg_color?: string
 					text_color?: string
@@ -18,14 +16,65 @@ declare global {
 					accent_text_color?: string
 				}
 				backgroundColor?: string
-				HapticFeedback?: {
+				headerColor?: string
+				backButtonColor?: string
+				BottomBar?: { backgroundColor?: string }
+
+				// --- Методы ---
+				/**
+				 * Готовит Mini App к отображению.
+				 * Должен быть вызван перед любыми изменениями интерфейса.
+				 */
+				ready: () => void
+
+				/**
+				 * Расширяет приложение на весь экран.
+				 */
+				expand: () => void
+
+				/**
+				 * Закрывает Mini App.
+				 */
+				close: () => void
+
+				/**
+				 * Отправляет данные в бота.
+				 */
+				sendData: (data: string) => void
+
+				/**
+				 * Показывает попап.
+				 */
+				showPopup: (params: {
+					title?: string
+					message: string
+					buttons: Array<{
+						type: 'ok' | 'close' | 'cancel' | 'default' | 'destructive'
+						text?: string
+					}>
+				}) => Promise<void>
+
+				/**
+				 * Показывает подтверждение.
+				 */
+				showConfirm: (message: string, callback?: (ok: boolean) => void) => void
+
+				/**
+				 * Haptic Feedback API
+				 */
+				HapticFeedback: {
 					impactOccurred: (
 						style: 'light' | 'medium' | 'heavy' | 'rigid' | 'soft'
 					) => void
 					notificationOccurred: (type: 'error' | 'success' | 'warning') => void
 					selectionChanged: () => void
 				}
-				// Другие методы и свойства можно добавить по необходимости
+
+				// --- События ---
+				onEvent: (eventType: string, callback: () => void) => void
+				offEvent: (eventType: string, callback: () => void) => void
+
+				// Другие поля можно добавить по мере необходимости
 			}
 		}
 	}
