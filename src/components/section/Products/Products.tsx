@@ -6,11 +6,14 @@ export function Products() {
 			<div
 				style={{
 					display: 'flex',
-					gap: '10px',
+					// gap: '10px',
+					justifyContent: 'space-between',
 					flexWrap: 'wrap',
-					padding: '5px',
+					padding: '10px',
 				}}
 			>
+				<ProductCard />
+				<ProductCard />
 				<ProductCard />
 				<ProductCard />
 			</div>
