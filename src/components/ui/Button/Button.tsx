@@ -7,6 +7,8 @@ interface ButtonProps {
 	type?: 'button' | 'submit' | 'reset'
 	disabled?: boolean
 	className?: string
+	w?: string
+	h?: string
 }
 
 export function Button(props: ButtonProps) {
@@ -16,11 +18,14 @@ export function Button(props: ButtonProps) {
 		type = 'button',
 		disabled = false,
 		className = '',
+		w = '',
+		h = '',
 		...rest
 	} = props
 
 	return (
 		<button
+			style={{ width: w, height: h }}
 			type={type}
 			onClick={onClick}
 			disabled={disabled}
