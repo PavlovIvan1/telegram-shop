@@ -1,10 +1,10 @@
 .card img {
-	width: 150px;
+	width: 120px;
 }
 
 .card {
 	background: var(--tg-theme-secondary-bg-color);
-	min-width: 150px;
+	min-width: 130px;
 	padding: 10px;
 	box-sizing: border-box;
 }
