@@ -33,7 +33,7 @@ export function Button(props: ButtonProps) {
 				height: h,
 				backgroundColor: buttonColor,
 				border: 'none',
-				borderRadius: '12px',
+				borderRadius: '1.5rem',
 			}}
 			type={type}
 			onClick={onClick}
