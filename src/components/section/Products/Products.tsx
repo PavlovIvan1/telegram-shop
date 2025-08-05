@@ -6,7 +6,7 @@ export function Products() {
 			<div
 				style={{
 					display: 'flex',
-					gap: '4px',
+					// gap: '4px',
 					justifyContent: 'space-between',
 					flexWrap: 'wrap',
 					padding: '10px',
