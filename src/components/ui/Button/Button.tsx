@@ -23,9 +23,18 @@ export function Button(props: ButtonProps) {
 		...rest
 	} = props
 
+	const theme = window.Telegram?.WebApp?.themeParams
+	const buttonColor = theme?.button_color || '#007EE5'
+
 	return (
 		<button
-			style={{ width: w, height: h }}
+			style={{
+				width: w,
+				height: h,
+				backgroundColor: buttonColor,
+				border: 'none',
+				borderRadius: '12px',
+			}}
 			type={type}
 			onClick={onClick}
 			disabled={disabled}

@@ -14,6 +14,7 @@ declare global {
 					button_text_color?: string
 					secondary_bg_color?: string
 					accent_text_color?: string
+					section_bg_color?: string
 				}
 				backgroundColor?: string
 				headerColor?: string

@@ -1,6 +1,6 @@
 // components/TopBar/TopBar.tsx
 import { ArrowDownUpIcon, Filter } from 'lucide-react'
-import { Search } from '../Search/Search'
+import { Search } from '../../ui/Search/Search'
 import styles from './TopBar.module.css'
 
 export function TopBar() {

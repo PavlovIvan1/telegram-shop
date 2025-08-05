@@ -1,0 +1,7 @@
+.card img {
+	width: 150px;
+}
+
+.card {
+	background: var(--tg-theme-secondary-bg-color);
+}
