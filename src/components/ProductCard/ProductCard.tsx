@@ -25,13 +25,14 @@ export function ProductCard() {
 					<FavoriteButton
 						w='36px'
 						h='36px'
-						bgColor='#ff3b30'
+						bgColor='none'
 						onClick={handleFavoriteClick}
 						style={{
 							borderRadius: '50%',
 							display: 'flex',
 							justifyContent: 'center',
 							alignItems: 'center',
+							color: '#fff',
 						}}
 					>
 						<span className={heartStyles.heartIcon}>
