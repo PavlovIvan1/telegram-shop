@@ -1,6 +1,7 @@
 import { ArrowBigRight, Heart } from 'lucide-react'
 import { Button } from '../ui/Button/Button'
 import { FavoriteButton } from '../ui/FavoriteButton/FavoriteButton'
+import heartStyles from '../ui/FavoriteButton/FavoriteButton.module.css'
 import styles from './ProductCard.module.css'
 
 export function ProductCard() {
@@ -33,7 +34,14 @@ export function ProductCard() {
 							alignItems: 'center',
 						}}
 					>
-						<Heart />
+						<span className={heartStyles.heartIcon}>
+							<Heart
+								size={16}
+								fill='currentColor'
+								stroke='white'
+								strokeWidth='2'
+							/>
+						</span>
 					</FavoriteButton>
 				</div>
 			</div>
