@@ -13,7 +13,7 @@ export function ProductCard() {
 				</div>
 				<div className={styles.card_buttons}>
 					<Button>
-						Подробнее <ArrowBigRight />
+						<ArrowBigRight />
 					</Button>
 					<Button>
 						<Heart />
