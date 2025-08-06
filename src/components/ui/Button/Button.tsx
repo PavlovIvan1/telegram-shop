@@ -1,5 +1,4 @@
 import React from 'react'
-import styles from './Button.module.css'
 
 interface ButtonProps {
 	children: React.ReactNode
@@ -39,11 +38,12 @@ export function Button(props: ButtonProps) {
 				fontSize: '14px',
 				fontWeight: '500',
 				gap: '5px',
+				justifyContent: 'center',
 			}}
 			type={type}
 			onClick={onClick}
 			disabled={disabled}
-			className={styles.button}
+			className={className}
 			{...rest}
 		>
 			{children}

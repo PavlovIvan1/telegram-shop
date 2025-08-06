@@ -1,8 +1,14 @@
 import { ArrowBigRight, Heart } from 'lucide-react'
 import { Button } from '../ui/Button/Button'
+import { FavoriteButton } from '../ui/FavoriteButton/FavoriteButton'
 import styles from './ProductCard.module.css'
 
 export function ProductCard() {
+	const handleFavoriteClick = () => {
+		window.Telegram?.WebApp?.HapticFeedback?.impactOccurred('light')
+		console.log('Добавлено в избранное')
+	}
+
 	return (
 		<>
 			<div className={styles.card}>
@@ -12,12 +18,23 @@ export function ProductCard() {
 					<span>124 000 р.</span>
 				</div>
 				<div className={styles.card_buttons}>
-					<Button>
+					<Button w='36px' h='36px'>
 						<ArrowBigRight />
 					</Button>
-					<Button>
+					<FavoriteButton
+						w='36px'
+						h='36px'
+						bgColor='#ff3b30'
+						onClick={handleFavoriteClick}
+						style={{
+							borderRadius: '50%',
+							display: 'flex',
+							justifyContent: 'center',
+							alignItems: 'center',
+						}}
+					>
 						<Heart />
-					</Button>
+					</FavoriteButton>
 				</div>
 			</div>
 		</>

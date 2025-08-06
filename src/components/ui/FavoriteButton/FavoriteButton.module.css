@@ -1,0 +1,18 @@
+/* components/ProductCard/FavoriteButton.module.css */
+
+.heartIcon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 16px;
+	height: 16px;
+	color: #fff;
+	transition: all 0.2s ease;
+}
+
+/* При нажатии — становится красным с белой обводкой */
+.heartIcon:active {
+	color: #ff3b30;
+	filter: drop-shadow(0 0 1px #fff);
+	transform: scale(1.1);
+}
