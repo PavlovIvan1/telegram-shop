@@ -4,6 +4,7 @@ export interface Product {
 	price: string
 	image: string
 	category?: string
+	tags?: string[]
 }
 
 const products: Product[] = [
