@@ -25,7 +25,7 @@ export function ProductCard() {
 					<FavoriteButton
 						w='36px'
 						h='36px'
-						bgColor='none'
+						bgColor='#ff3b30'
 						onClick={handleFavoriteClick}
 						style={{
 							borderRadius: '50%',
