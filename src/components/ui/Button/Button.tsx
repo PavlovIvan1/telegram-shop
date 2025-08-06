@@ -34,6 +34,11 @@ export function Button(props: ButtonProps) {
 				backgroundColor: buttonColor,
 				border: 'none',
 				borderRadius: '0.8rem',
+				display: 'flex',
+				alignItems: 'center',
+				fontSize: '14px',
+				fontWeight: '500',
+				gap: '5px',
 			}}
 			type={type}
 			onClick={onClick}
