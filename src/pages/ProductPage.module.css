@@ -89,3 +89,17 @@
 	margin-bottom: 8px;
 	font-size: 14px;
 }
+
+/* добавь если нужно */
+.keen-slider {
+	width: 100%;
+	height: 300px;
+	border-radius: 12px;
+	overflow: hidden;
+}
+
+.keen-slider__slide {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}

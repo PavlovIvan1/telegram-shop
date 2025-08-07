@@ -10,11 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "keen-slider": "^6.8.6",
     "lucide-react": "^0.536.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.7.1",
-    "swiper": "^11.2.10"
+    "swiper": "6.8.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.30.1",
