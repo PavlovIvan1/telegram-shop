@@ -199,7 +199,7 @@ export function Favorites() {
 							alt={product.name}
 							style={{
 								width: '100%',
-								height: 140,
+								// height: 140,
 								objectFit: 'cover',
 								borderRadius: 12,
 							}}
