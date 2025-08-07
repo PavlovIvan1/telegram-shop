@@ -126,6 +126,7 @@
 // components/ProductCard/ProductCard.tsx
 import { ArrowBigRight, Heart } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import type { Product } from '../../data/products'
 import { Button } from '../ui/Button/Button'
 import { FavoriteButton } from '../ui/FavoriteButton/FavoriteButton'
@@ -164,9 +165,11 @@ export function ProductCard({ product }: ProductCardProps) {
 				<span>{product.price}</span>
 			</div>
 			<div className={styles.card_buttons}>
-				<Button w='36px' h='36px'>
-					<ArrowBigRight size={20} />
-				</Button>
+				<Link to={`/product/${product.id}`}>
+					<Button w='36px' h='36px'>
+						<ArrowBigRight size={20} />
+					</Button>
+				</Link>
 				<FavoriteButton
 					w='36px'
 					h='36px'

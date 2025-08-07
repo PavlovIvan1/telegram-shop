@@ -4,6 +4,7 @@ import { MobileNavbar } from './components/section/navbar'
 import { Button } from './components/ui/Button/Button'
 import { Favorites } from './pages/Favorites'
 import { Home } from './pages/Home'
+import { ProductPage } from './pages/ProductPage'
 
 export function App() {
 	useEffect(() => {
@@ -22,6 +23,7 @@ export function App() {
 					<Route path='/' element={<Home />} />
 					<Route path='/search' element={<Home />} />
 					<Route path='/favorites' element={<Favorites />} />
+					<Route path='/product/:id' element={<ProductPage />} />
 				</Routes>
 			</div>
 
