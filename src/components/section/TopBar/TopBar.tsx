@@ -136,6 +136,7 @@ export function TopBar({
 	onSortChange,
 	filterCategory,
 	onFilterChange,
+	onSearchKeyDown,
 }: TopBarProps) {
 	const [isSortOpen, setIsSortOpen] = useState(false)
 	const [isFilterOpen, setIsFilterOpen] = useState(false)
@@ -184,7 +185,11 @@ export function TopBar({
 		<div className={styles.topBar}>
 			{/* Поиск */}
 			<div className={styles.searchSection}>
-				<Search value={searchValue} onChange={onSearchChange} />
+				<Search
+					value={searchValue}
+					onChange={onSearchChange}
+					onKeyDown={onSearchKeyDown}
+				/>
 			</div>
 
 			{/* Кнопка сортировки + dropdown */}

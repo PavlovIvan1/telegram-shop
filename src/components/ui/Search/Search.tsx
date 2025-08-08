@@ -56,9 +56,10 @@ import styles from './Search.module.css'
 interface SearchProps {
 	value: string
 	onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+	onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void
 }
 
-export function Search({ value, onChange }: SearchProps) {
+export function Search({ value, onChange, onKeyDown }: SearchProps) {
 	const theme = window.Telegram?.WebApp?.themeParams
 	const textColor = theme?.text_color || '#000000'
 	const hintColor = theme?.hint_color || '#999999'
@@ -79,6 +80,7 @@ export function Search({ value, onChange }: SearchProps) {
 					type='text'
 					value={value}
 					onChange={onChange}
+					onKeyDown={onKeyDown}
 					placeholder='Поиск по товарам...'
 					className={styles.searchInput}
 					style={{
