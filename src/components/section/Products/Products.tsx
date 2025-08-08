@@ -283,7 +283,7 @@ export function Products() {
 		}
 	}
 
-	const onSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+	const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
 		if (e.key === 'Enter') {
 			fetchProducts(searchValue)
 		}
@@ -342,7 +342,7 @@ export function Products() {
 			<TopBar
 				searchValue={searchValue}
 				onSearchChange={e => setSearchValue(e.target.value)}
-				onSearchKeyDown={onSearchKeyDown}
+				onSearchKeyDown={handleSearchKeyDown}
 				sortOption={sortOption}
 				onSortChange={setSortOption}
 				filterCategory={filterCategory}
