@@ -228,7 +228,7 @@
 // 	)
 // }
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { API_URL } from '../../../constants/url.constants'
 import type { Product } from '../../../data/products'
 import { ProductCard } from '../../ProductCard/ProductCard'
@@ -242,59 +242,52 @@ export function Products() {
 	const [loading, setLoading] = useState(false)
 	const [error, setError] = useState<string | null>(null)
 
-	useEffect(() => {
-		if (searchValue.trim() === '') return
+	if (searchValue.trim() === '') return
 
-		const fetchProducts = async (searchText: string) => {
-			try {
-				setLoading(true)
-				setError(null)
+	const fetchProducts = async (searchText: string) => {
+		try {
+			setLoading(true)
+			setError(null)
 
-				const handleRes = await fetch(`${API_URL}/handle`, {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({
-						query_id: window.Telegram?.WebApp?.initDataUnsafe?.query_id,
-						user_id: window.Telegram?.WebApp?.initDataUnsafe?.user?.id,
-						search_text: searchText || 'айфон',
-					}),
-				})
+			const handleRes = await fetch(`${API_URL}/handle`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					query_id: window.Telegram?.WebApp?.initDataUnsafe?.query_id,
+					user_id: window.Telegram?.WebApp?.initDataUnsafe?.user?.id,
+					search_text: searchText || 'айфон',
+				}),
+			})
 
-				const handleData = await handleRes.json()
-				if (handleData.status !== 'ok') {
-					throw new Error(handleData.result || 'Ошибка при запросе /handle')
-				}
-
-				const renderRes = await fetch(`${API_URL}/render`, {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({
-						items: handleData.items,
-						keyword: handleData.keyword,
-					}),
-				})
-
-				const renderData = await renderRes.json()
-				const productsArray: Product[] = Object.values(
-					renderData?.products || {}
-				)
-				setProducts(productsArray)
-			} catch (err) {
-				setError((err as Error).message)
-			} finally {
-				setLoading(false)
+			const handleData = await handleRes.json()
+			if (handleData.status !== 'ok') {
+				throw new Error(handleData.result || 'Ошибка при запросе /handle')
 			}
+
+			const renderRes = await fetch(`${API_URL}/render`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					items: handleData.items,
+					keyword: handleData.keyword,
+				}),
+			})
+
+			const renderData = await renderRes.json()
+			const productsArray: Product[] = Object.values(renderData?.products || {})
+			setProducts(productsArray)
+		} catch (err) {
+			setError((err as Error).message)
+		} finally {
+			setLoading(false)
 		}
+	}
 
-		fetchProducts(searchValue)
-	}, [searchValue])
-
-	// Обработчик нажатия Enter в поле поиска
-	// const onSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-	// 	if (e.key === 'Enter') {
-	// 		fetchProducts(searchValue)
-	// 	}
-	// }
+	const onSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+		if (e.key === 'Enter') {
+			fetchProducts(searchValue)
+		}
+	}
 
 	// Фильтрация
 	const filteredProducts = products
@@ -349,6 +342,7 @@ export function Products() {
 			<TopBar
 				searchValue={searchValue}
 				onSearchChange={e => setSearchValue(e.target.value)}
+				onSearchKeyDown={onSearchKeyDown}
 				sortOption={sortOption}
 				onSortChange={setSortOption}
 				filterCategory={filterCategory}

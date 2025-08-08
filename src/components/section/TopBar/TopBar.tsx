@@ -126,6 +126,7 @@ interface TopBarProps {
 	onSortChange: (value: string) => void
 	filterCategory: string
 	onFilterChange: (value: string) => void
+	onSearchKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void
 }
 
 export function TopBar({
