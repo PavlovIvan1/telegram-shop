@@ -242,8 +242,6 @@ export function Products() {
 	const [loading, setLoading] = useState(false)
 	const [error, setError] = useState<string | null>(null)
 
-	if (searchValue.trim() === '') return
-
 	const fetchProducts = async (searchText: string) => {
 		try {
 			setLoading(true)
@@ -329,16 +327,6 @@ export function Products() {
 
 	return (
 		<div>
-			{/* <TopBar
-				searchValue={searchValue}
-				onSearchChange={e => setSearchValue(e.target.value)}
-				onSearchKeyDown={onSearchKeyDown} // <- здесь передаем обработчик Enter
-				sortOption={sortOption}
-				onSortChange={setSortOption}
-				filterCategory={filterCategory}
-				onFilterChange={setFilterCategory}
-			/> */}
-
 			<TopBar
 				searchValue={searchValue}
 				onSearchChange={e => setSearchValue(e.target.value)}
