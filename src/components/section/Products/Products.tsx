@@ -243,6 +243,8 @@ export function Products() {
 	const [error, setError] = useState<string | null>(null)
 
 	useEffect(() => {
+		if (searchValue.trim() === '') return
+
 		const fetchProducts = async (searchText: string) => {
 			try {
 				setLoading(true)
