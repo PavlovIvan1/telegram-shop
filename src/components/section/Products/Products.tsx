@@ -133,8 +133,10 @@ export function Products() {
 				const renderData = await renderRes.json()
 
 				// 3️⃣ Заполняем товары
-			  const productsArray: Product[] = Object.values(renderData?.products || {})
-                setProducts(productsArray)
+				const productsArray: Product[] = Object.values(
+					renderData?.products || {}
+				)
+				setProducts(productsArray)
 			} catch (err) {
 				setError((err as Error).message)
 			} finally {
