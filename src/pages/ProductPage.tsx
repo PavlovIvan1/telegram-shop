@@ -24,7 +24,6 @@ export function ProductPage() {
 		}
 	}, [id])
 
-	// ✅ ВСЕГДА вызываем useKeenSlider, даже если product ещё не загружен
 	const images = product ? [product.image] : []
 	const [sliderRef] = useKeenSlider<HTMLDivElement>({
 		loop: true,

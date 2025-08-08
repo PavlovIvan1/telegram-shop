@@ -4,7 +4,14 @@ declare global {
 	interface Window {
 		Telegram?: {
 			WebApp: {
-				// --- Данные ---
+				initDataUnsafe?: {
+					query_id?: string
+					user?: {
+						id?: number
+						[key: string]: unknown
+					}
+					[key: string]: unknown
+				}
 				themeParams: {
 					bg_color?: string
 					text_color?: string
