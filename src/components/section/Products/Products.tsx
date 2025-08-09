@@ -929,6 +929,7 @@ export function Products() {
 			})
 
 			const renderData = await renderRes.json()
+			console.log('Полученные данные renderData:', renderData)
 
 			function formatPrice(priceNumber: number): string {
 				return (
