@@ -899,6 +899,7 @@ export function Products() {
 	const [error, setError] = useState<string | null>(null)
 
 	const fetchProducts = async (searchText: string) => {
+		console.log('fetchProducts вызван с поиском:', searchText)
 		try {
 			setLoading(true)
 			setError(null)
@@ -964,6 +965,7 @@ export function Products() {
 
 	const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
 		if (e.key === 'Enter') {
+			console.log('Нажат Enter, запускаем поиск')
 			fetchProducts(searchValue)
 		}
 	}
