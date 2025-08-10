@@ -102,19 +102,12 @@ export function ProductCard({ product }: ProductCardProps) {
 	useEffect(() => {
 		try {
 			const stored = localStorage.getItem('favorites') || '[]'
-			console.log('[ProductCard] raw favorites from localStorage:', stored)
-
 			const favorites = JSON.parse(stored) as string[]
-			console.log('[ProductCard] parsed favorites:', favorites)
-			console.log(`[ProductCard] checking if product ${product.id} is favorite`)
 
-			const inFavorites = favorites.includes(String(product.id))
-			console.log(`[ProductCard] is product favorite?`, inFavorites)
-
-			setIsFavorite(inFavorites)
+			setIsFavorite(favorites.includes(String(product.id)))
 		} catch (e) {
 			console.error(
-				'[ProductCard] error parsing favorites from localStorage:',
+				'[ProductCard] error parsing favorites from localStorage',
 				e
 			)
 			setIsFavorite(false)
@@ -124,23 +117,14 @@ export function ProductCard({ product }: ProductCardProps) {
 	const handleFavoriteClick = () => {
 		window.Telegram?.WebApp?.HapticFeedback?.impactOccurred('light')
 
-		const favorites = JSON.parse(localStorage.getItem('favorites') || '[]')
+		const stored = localStorage.getItem('favorites') || '[]'
+		const favorites = JSON.parse(stored) as string[]
 
-		console.log('Текущий список избранных до изменения:', favorites)
-		console.log('Текущий товар:', product)
-
-		let newFavorites
-		if (isFavorite) {
-			newFavorites = favorites.filter((id: string) => id !== product.id)
-			console.log(`Удаляем товар ${product.id} из избранного`)
-		} else {
-			newFavorites = [...favorites, product.id]
-			console.log(`Добавляем товар ${product.id} в избранное`)
-		}
+		const newFavorites = isFavorite
+			? favorites.filter(id => id !== String(product.id))
+			: [...favorites, String(product.id)]
 
 		localStorage.setItem('favorites', JSON.stringify(newFavorites))
-		console.log('Новый список избранных после изменения:', newFavorites)
-
 		setIsFavorite(!isFavorite)
 	}
 
