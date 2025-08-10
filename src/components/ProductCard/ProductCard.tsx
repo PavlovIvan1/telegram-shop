@@ -126,7 +126,7 @@
 // components/ProductCard/ProductCard.tsx
 import { ArrowBigRight, Heart } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import type { Product } from '../../data/products'
 import { Button } from '../ui/Button/Button'
 import { FavoriteButton } from '../ui/FavoriteButton/FavoriteButton'
@@ -139,6 +139,7 @@ interface ProductCardProps {
 
 export function ProductCard({ product }: ProductCardProps) {
 	const [isFavorite, setIsFavorite] = useState(false)
+	const navigate = useNavigate()
 
 	useEffect(() => {
 		const favorites = JSON.parse(localStorage.getItem('favorites') || '[]')
@@ -165,11 +166,13 @@ export function ProductCard({ product }: ProductCardProps) {
 				<span>{product.price}</span>
 			</div>
 			<div className={styles.card_buttons}>
-				<Link to={`/product/${product.id}`}>
-					<Button w='36px' h='36px'>
-						<ArrowBigRight size={20} />
-					</Button>
-				</Link>
+				<Button
+					w='36px'
+					h='36px'
+					onClick={() => navigate(`/product/${product.id}`, { state: product })}
+				>
+					<ArrowBigRight size={20} />
+				</Button>
 				<FavoriteButton
 					w='36px'
 					h='36px'
