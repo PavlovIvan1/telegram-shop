@@ -102,45 +102,46 @@ export function ProductCard({ product }: ProductCardProps) {
 	useEffect(() => {
 		try {
 			const stored = localStorage.getItem('favorites') || '[]'
+			console.log('[ProductCard] raw favorites from localStorage:', stored)
+
 			const favorites = JSON.parse(stored) as string[]
-			console.log('[ProductCard] init favorites from localStorage:', favorites)
-			setIsFavorite(favorites.includes(String(product.id)))
+			console.log('[ProductCard] parsed favorites:', favorites)
+			console.log(`[ProductCard] checking if product ${product.id} is favorite`)
+
+			const inFavorites = favorites.includes(String(product.id))
+			console.log(`[ProductCard] is product favorite?`, inFavorites)
+
+			setIsFavorite(inFavorites)
 		} catch (e) {
 			console.error(
-				'[ProductCard] error parsing favorites from localStorage',
+				'[ProductCard] error parsing favorites from localStorage:',
 				e
 			)
 			setIsFavorite(false)
 		}
 	}, [product.id])
 
-	const handleFavoriteClick = (e?: React.MouseEvent) => {
-		// если кнопка внутри Link — предотвращаем всплытие, чтобы не перейти на страницу
-		if (e) e.stopPropagation()
-
+	const handleFavoriteClick = () => {
 		window.Telegram?.WebApp?.HapticFeedback?.impactOccurred('light')
 
-		try {
-			const stored = localStorage.getItem('favorites') || '[]'
-			const favorites = JSON.parse(stored) as string[]
-			console.log('[ProductCard] before toggle favorites:', favorites)
+		const favorites = JSON.parse(localStorage.getItem('favorites') || '[]')
 
-			const idStr = String(product.id)
-			const newFavorites = isFavorite
-				? favorites.filter((id: string) => id !== idStr)
-				: [...favorites.filter(Boolean), idStr] // filter(Boolean) на всякий случай
+		console.log('Текущий список избранных до изменения:', favorites)
+		console.log('Текущий товар:', product)
 
-			localStorage.setItem('favorites', JSON.stringify(newFavorites))
-			console.log('[ProductCard] after toggle favorites:', newFavorites)
-
-			// уведомляем другие части приложения (в том числе тот же таб)
-			window.dispatchEvent(new Event('favoritesUpdated'))
-
-			// обновление локального состояния кнопки
-			setIsFavorite(!isFavorite)
-		} catch (err) {
-			console.error('[ProductCard] error toggling favorites', err)
+		let newFavorites
+		if (isFavorite) {
+			newFavorites = favorites.filter((id: string) => id !== product.id)
+			console.log(`Удаляем товар ${product.id} из избранного`)
+		} else {
+			newFavorites = [...favorites, product.id]
+			console.log(`Добавляем товар ${product.id} в избранное`)
 		}
+
+		localStorage.setItem('favorites', JSON.stringify(newFavorites))
+		console.log('Новый список избранных после изменения:', newFavorites)
+
+		setIsFavorite(!isFavorite)
 	}
 
 	return (
