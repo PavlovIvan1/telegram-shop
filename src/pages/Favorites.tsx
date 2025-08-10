@@ -217,42 +217,147 @@
 // 	)
 // }
 
-import { useEffect, useState } from 'react'
+// import { useEffect, useState } from 'react'
+// import { productMap } from '../data/products'
+// import styles from './Favorites.module.css'
+
+// import type { Product } from '../data/products'
+
+// export function Favorites() {
+// 	const [favoriteProducts, setFavoriteProducts] = useState<Product[]>([])
+
+// 	// Функция для загрузки избранных из localStorage
+// 	const loadFavorites = () => {
+// 		const favorites = JSON.parse(
+// 			localStorage.getItem('favorites') || '[]'
+// 		) as string[]
+// 		const items = favorites
+// 			.map(id => productMap[id])
+// 			.filter((p): p is Product => p !== undefined)
+// 		setFavoriteProducts(items)
+// 	}
+
+// 	useEffect(() => {
+// 		loadFavorites()
+
+// 		// Обновлять при изменении localStorage в других вкладках
+// 		function onStorageChange(event: StorageEvent) {
+// 			if (event.key === 'favorites') {
+// 				loadFavorites()
+// 			}
+// 		}
+
+// 		window.addEventListener('storage', onStorageChange)
+
+// 		return () => window.removeEventListener('storage', onStorageChange)
+// 	}, [])
+
+// 	// Еще можно добавить кнопку "Обновить", если storage-событие не срабатывает в рамках одного таба
+
+// 	if (favoriteProducts.length === 0) {
+// 		return (
+// 			<div style={{ padding: '20px', textAlign: 'center', color: '#999' }}>
+// 				Нет избранных товаров
+// 			</div>
+// 		)
+// 	}
+
+// 	return (
+// 		<div style={{ padding: '16px' }}>
+// 			<h2>Избранное</h2>
+// 			<div
+// 				style={{
+// 					display: 'grid',
+// 					gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+// 					gap: '16px',
+// 					marginTop: '12px',
+// 				}}
+// 			>
+// 				{favoriteProducts.map(product => (
+// 					<div key={product.id} className={styles.favoriteCard}>
+// 						<img
+// 							src={product.image}
+// 							alt={product.name}
+// 							style={{
+// 								width: '100%',
+// 								objectFit: 'cover',
+// 								borderRadius: 12,
+// 							}}
+// 						/>
+// 						<h3 style={{ margin: '8px 0 4px', fontSize: '15px' }}>
+// 							{product.name}
+// 						</h3>
+// 						<span style={{ color: '#007EE5', fontWeight: 500 }}>
+// 							{product.price}
+// 						</span>
+// 					</div>
+// 				))}
+// 			</div>
+// 		</div>
+// 	)
+// }
+
+// pages/Favorites.tsx
+import { useCallback, useEffect, useState } from 'react'
+import type { Product } from '../data/products'
 import { productMap } from '../data/products'
 import styles from './Favorites.module.css'
-
-import type { Product } from '../data/products'
 
 export function Favorites() {
 	const [favoriteProducts, setFavoriteProducts] = useState<Product[]>([])
 
-	// Функция для загрузки избранных из localStorage
-	const loadFavorites = () => {
-		const favorites = JSON.parse(
-			localStorage.getItem('favorites') || '[]'
-		) as string[]
-		const items = favorites
-			.map(id => productMap[id])
-			.filter((p): p is Product => p !== undefined)
-		setFavoriteProducts(items)
-	}
+	const loadFavorites = useCallback(() => {
+		try {
+			const raw = localStorage.getItem('favorites')
+			console.log('[Favorites] raw favorites from localStorage:', raw)
+			const favorites = JSON.parse(raw || '[]') as string[]
+			console.log('[Favorites] parsed favorites:', favorites)
+
+			const items = favorites
+				.map(id => {
+					const p = productMap[String(id)]
+					if (!p)
+						console.warn(`[Favorites] productMap has no item for id="${id}"`)
+					return p ?? null
+				})
+				.filter((p): p is Product => p !== null)
+
+			console.log(
+				'[Favorites] mapped products:',
+				items.map(p => p.id)
+			)
+			setFavoriteProducts(items)
+		} catch (err) {
+			console.error(
+				'[Favorites] error reading favorites from localStorage',
+				err
+			)
+			setFavoriteProducts([])
+		}
+	}, [])
 
 	useEffect(() => {
 		loadFavorites()
 
-		// Обновлять при изменении localStorage в других вкладках
-		function onStorageChange(event: StorageEvent) {
-			if (event.key === 'favorites') {
+		const onStorage = (ev: StorageEvent) => {
+			if (ev.key === 'favorites') {
+				console.log('[Favorites] storage event fired (cross-tab), updating')
 				loadFavorites()
 			}
 		}
+		const onCustom = () => {
+			console.log('[Favorites] custom event favoritesUpdated fired, updating')
+			loadFavorites()
+		}
 
-		window.addEventListener('storage', onStorageChange)
+		window.addEventListener('storage', onStorage)
+		window.addEventListener('favoritesUpdated', onCustom)
 
-		return () => window.removeEventListener('storage', onStorageChange)
-	}, [])
-
-	// Еще можно добавить кнопку "Обновить", если storage-событие не срабатывает в рамках одного таба
+		return () => {
+			window.removeEventListener('storage', onStorage)
+			window.removeEventListener('favoritesUpdated', onCustom)
+		}
+	}, [loadFavorites])
 
 	if (favoriteProducts.length === 0) {
 		return (
