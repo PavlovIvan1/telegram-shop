@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { API_URL } from '../../../constants/url.constants'
 import type { Product } from '../../../data/products'
+import { addBackendProduct } from '../../../data/products'
 import { ProductCard } from '../../ProductCard/ProductCard'
 import { TopBar } from '../TopBar/TopBar'
 
@@ -72,6 +73,11 @@ export function Products() {
 				category: '',
 				tags: [],
 			}))
+
+			// Добавляем товары с бэкенда в глобальное хранилище
+			productsArray.forEach(product => {
+				addBackendProduct(product)
+			})
 
 			productsArray.forEach((product, index) => {
 				console.log(`Товар ${index + 1}: ${product.name} — ${product.price}`)

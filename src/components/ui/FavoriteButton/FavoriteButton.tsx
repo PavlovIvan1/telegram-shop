@@ -39,7 +39,7 @@ export function FavoriteButton({
 				height: h,
 				backgroundColor: background,
 				border: 'none',
-				borderRadius: '0.8rem',
+				borderRadius: '8px',
 				display: 'flex',
 				alignItems: 'center',
 				fontSize: '14px',

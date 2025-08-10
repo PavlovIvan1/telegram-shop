@@ -298,13 +298,26 @@
 // }
 
 // pages/Favorites.tsx
+import { Heart } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
+import { FavoriteButton } from '../components/ui/FavoriteButton/FavoriteButton'
+import heartStyles from '../components/ui/FavoriteButton/FavoriteButton.module.css'
 import type { Product } from '../data/products'
-import { productMap } from '../data/products'
+import { getProductById } from '../data/products'
 import styles from './Favorites.module.css'
 
 export function Favorites() {
 	const [favoriteProducts, setFavoriteProducts] = useState<Product[]>([])
+
+	const removeFromFavorites = (productId: string) => {
+		const stored = localStorage.getItem('favorites') || '[]'
+		const favorites = JSON.parse(stored) as string[]
+		const newFavorites = favorites.filter(id => id !== String(productId))
+		localStorage.setItem('favorites', JSON.stringify(newFavorites))
+		
+		// Обновляем список избранных
+		loadFavorites()
+	}
 
 	const loadFavorites = useCallback(() => {
 		try {
@@ -315,9 +328,9 @@ export function Favorites() {
 
 			const items = favorites
 				.map(id => {
-					const p = productMap[String(id)]
+					const p = getProductById(String(id))
 					if (!p)
-						console.warn(`[Favorites] productMap has no item for id="${id}"`)
+						console.warn(`[Favorites] product not found for id="${id}"`)
 					return p ?? null
 				})
 				.filter((p): p is Product => p !== null)
@@ -380,15 +393,41 @@ export function Favorites() {
 			>
 				{favoriteProducts.map(product => (
 					<div key={product.id} className={styles.favoriteCard}>
-						<img
-							src={product.image}
-							alt={product.name}
-							style={{
-								width: '100%',
-								objectFit: 'cover',
-								borderRadius: 12,
-							}}
-						/>
+						<div style={{ position: 'relative' }}>
+							<img
+								src={product.image}
+								alt={product.name}
+								style={{
+									width: '100%',
+									objectFit: 'cover',
+									borderRadius: 12,
+								}}
+							/>
+							<div style={{ position: 'absolute', top: '8px', right: '8px' }}>
+								<FavoriteButton
+									w='32px'
+									h='32px'
+									bgColor='#ff3b30'
+									onClick={() => removeFromFavorites(product.id)}
+									style={{
+										borderRadius: '50%',
+										display: 'flex',
+										justifyContent: 'center',
+										alignItems: 'center',
+										color: '#fff',
+									}}
+								>
+									<span className={heartStyles.heartIcon}>
+										<Heart
+											size={14}
+											fill='currentColor'
+											stroke='white'
+											strokeWidth='2'
+										/>
+									</span>
+								</FavoriteButton>
+							</div>
+						</div>
 						<h3 style={{ margin: '8px 0 4px', fontSize: '15px' }}>
 							{product.name}
 						</h3>

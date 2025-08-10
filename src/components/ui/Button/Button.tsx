@@ -32,7 +32,7 @@ export function Button(props: ButtonProps) {
 				height: h,
 				backgroundColor: buttonColor,
 				border: 'none',
-				borderRadius: '0.8rem',
+				borderRadius: '8px',
 				display: 'flex',
 				alignItems: 'center',
 				fontSize: '14px',

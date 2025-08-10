@@ -51,5 +51,23 @@ export const productMap = products.reduce((acc, product) => {
 	return acc
 }, {} as Record<string, Product>)
 
+// Глобальное хранилище для товаров с бэкенда
+export const backendProductsMap = new Map<string, Product>()
+
+// Функция для добавления товара с бэкенда в глобальное хранилище
+export function addBackendProduct(product: Product) {
+	backendProductsMap.set(product.id, product)
+}
+
+// Функция для получения товара по id (сначала из локальных, потом из бэкенда)
+export function getProductById(id: string): Product | undefined {
+	// Сначала ищем в локальных товарах
+	if (productMap[id]) {
+		return productMap[id]
+	}
+	// Затем ищем в товарах с бэкенда
+	return backendProductsMap.get(id)
+}
+
 // Экспортируем как массив — для отображения в каталоге
 export { products }

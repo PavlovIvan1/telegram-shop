@@ -126,6 +126,9 @@ export function ProductCard({ product }: ProductCardProps) {
 
 		localStorage.setItem('favorites', JSON.stringify(newFavorites))
 		setIsFavorite(!isFavorite)
+
+		// Отправляем событие об обновлении избранного
+		window.dispatchEvent(new CustomEvent('favoritesUpdated'))
 	}
 
 	return (
