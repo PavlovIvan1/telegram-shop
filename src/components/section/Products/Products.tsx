@@ -40,18 +40,10 @@ export function Products() {
 			})
 
 			const handleData = await handleRes.json()
-			if (handleData.status !== 'ok') {
+            if (handleData.status !== 'ok') {
 				throw new Error(handleData.result || 'Ошибка при запросе /handle')
 			}
 
-    // Restore search from URL and fetch on mount or when ?q= changes
-    useEffect(() => {
-        const q = searchParams.get('q') || ''
-        if (q && q !== searchValue) {
-            setSearchValue(q)
-            fetchProducts(q)
-        }
-    }, [searchParams])
 
 			const renderRes = await fetch(`${API_URL}/render`, {
 				method: 'POST',
@@ -70,6 +62,14 @@ export function Products() {
 					priceNumber.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' ₽'
 				)
 			}
+
+  // Restore search from URL and fetch on mount or when ?q= changes
+  useEffect(() => {
+    const q = searchParams.get('q') || ''
+    // Always reflect query param in input
+    if (q !== searchValue) setSearchValue(q)
+    if (q) fetchProducts(q)
+  }, [searchParams])
 
 			// Объединяем left_products и right_products в один массив
 			const leftProducts: ApiProduct[] = renderData.left_products || []
