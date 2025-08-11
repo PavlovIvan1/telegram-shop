@@ -299,6 +299,7 @@
 // pages/Favorites.tsx
 import { Heart } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
+import { BeatLoader } from 'react-spinners'
 import { FavoriteButton } from '../components/ui/FavoriteButton/FavoriteButton'
 import heartStyles from '../components/ui/FavoriteButton/FavoriteButton.module.css'
 import type { Product } from '../data/products'
@@ -308,6 +309,7 @@ import styles from './Favorites.module.css'
 
 export function Favorites() {
 	const [favoriteProducts, setFavoriteProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState<boolean>(true)
 
   const removeFromFavorites = async (productId: string) => {
     await removeFavorite(String(productId))
@@ -317,6 +319,7 @@ export function Favorites() {
   const loadFavorites = useCallback(() => {
     ;(async () => {
       try {
+        setLoading(true)
         const favorites = await getFavorites()
         const items = favorites
           .map(id => getProductById(String(id)) ?? null)
@@ -325,6 +328,8 @@ export function Favorites() {
       } catch (err) {
         console.error('[Favorites] error reading favorites', err)
         setFavoriteProducts([])
+      } finally {
+        setLoading(false)
       }
     })()
   }, [])
@@ -352,7 +357,15 @@ export function Favorites() {
 		}
 	}, [loadFavorites])
 
-	if (favoriteProducts.length === 0) {
+  if (loading) {
+    return (
+      <div style={{ padding: '24px', display: 'flex', justifyContent: 'center' }}>
+        <BeatLoader color={window.Telegram?.WebApp?.themeParams?.button_color || '#007EE5'} size={10} />
+      </div>
+    )
+  }
+
+  if (favoriteProducts.length === 0) {
 		return (
 			<div style={{ padding: '20px', textAlign: 'center', color: '#999' }}>
 				Нет избранных товаров

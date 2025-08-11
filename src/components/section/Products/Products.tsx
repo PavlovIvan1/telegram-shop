@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { BeatLoader } from 'react-spinners'
 import { API_URL } from '../../../constants/url.constants'
 import type { Product } from '../../../data/products'
 import { addBackendProduct } from '../../../data/products'
@@ -161,7 +162,12 @@ export function Products() {
 		}
 	})
 
-	if (loading) return <div style={{ padding: '20px' }}>Загрузка...</div>
+    if (loading)
+        return (
+            <div style={{ padding: '24px', display: 'flex', justifyContent: 'center' }}>
+                <BeatLoader color={window.Telegram?.WebApp?.themeParams?.button_color || '#007EE5'} size={10} />
+            </div>
+        )
 	if (error)
 		return <div style={{ padding: '20px', color: 'red' }}>Ошибка: {error}</div>
 

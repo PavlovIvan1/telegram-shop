@@ -127,6 +127,7 @@
 import { ArrowLeft } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { BeatLoader } from 'react-spinners'
 import type { Product } from '../data/products'
 import { productMap } from '../data/products'
 import styles from './ProductPage.module.css'
@@ -151,8 +152,22 @@ export function ProductPage() {
 	}, [id, location.state])
 
   const images = product ? (product.images && product.images.length > 0 ? product.images : [product.image].filter(Boolean)) : []
+  const [isLoading, setIsLoading] = useState(true)
 
-	if (!product) {
+  useEffect(() => {
+    // считем, что продукт загружен когда setProduct отработал
+    setIsLoading(false)
+  }, [product])
+
+  if (isLoading) {
+    return (
+      <div style={{ padding: '24px', display: 'flex', justifyContent: 'center' }}>
+        <BeatLoader color={window.Telegram?.WebApp?.themeParams?.button_color || '#007EE5'} size={10} />
+      </div>
+    )
+  }
+
+  if (!product) {
 		return (
 			<div style={{ padding: '20px', textAlign: 'center', color: '#999' }}>
 				Товар не найден
