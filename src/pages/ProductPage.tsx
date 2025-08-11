@@ -136,10 +136,22 @@ export function ProductPage() {
 					borderRadius: '12px'
 				}}>
 					{product.video && (
-						<div style={{ minWidth: '100%', scrollSnapAlign: 'start', aspectRatio: '16/9' }}>
+						<div style={{ 
+							minWidth: '100%', 
+							scrollSnapAlign: 'start',
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'center',
+							aspectRatio: '16/9'
+						}}>
 							<video
 								ref={videoRef}
-								style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 12 }}
+								style={{ 
+									width: '100%', 
+									height: '100%', 
+									objectFit: 'contain', 
+									borderRadius: 12 
+								}}
 								controls
 								preload="none"
 								playsInline
@@ -148,12 +160,20 @@ export function ProductPage() {
 						</div>
 					)}
 					{images.map((src, index) => (
-						<div key={index} style={{ minWidth: '100%', scrollSnapAlign: 'start', aspectRatio: '16/9' }}>
+						<div key={index} style={{ 
+							minWidth: '100%', 
+							scrollSnapAlign: 'start'
+						}}>
 							<img
 								src={src}
 								alt={`Фото ${index + 1}`}
 								onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
-								style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '12px' }}
+								style={{ 
+									width: '100%', 
+									height: 'auto', 
+									objectFit: 'contain', 
+									borderRadius: '12px' 
+								}}
 							/>
 						</div>
 					))}
