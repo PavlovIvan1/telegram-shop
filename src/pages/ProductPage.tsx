@@ -209,6 +209,15 @@ export function ProductPage() {
                     scrollSnapType: 'x mandatory',
                     borderRadius: '12px'
                 }}>
+                    {product.video && (
+                      <div style={{ minWidth: '100%', scrollSnapAlign: 'start' }}>
+                        <video
+                          style={{ width: '100%', borderRadius: 12 }}
+                          controls
+                          src={product.video}
+                        />
+                      </div>
+                    )}
                     {images.map((src, index) => (
                         <div key={index} style={{ minWidth: '100%', scrollSnapAlign: 'start' }}>
                             <img
@@ -222,19 +231,30 @@ export function ProductPage() {
                 </div>
             </div>
 
-            {product.video && (
-              <div style={{ marginTop: 12 }}>
-                <video
-                  style={{ width: '100%', borderRadius: 12 }}
-                  controls
-                  src={product.video}
-                />
-              </div>
-            )}
-
 			<div className={styles.info}>
 				<h2 className={styles.productName}>{product.name}</h2>
 				<div className={styles.price}>{product.price}</div>
+                {product.link && (
+                  <div style={{ margin: '8px 0 16px' }}>
+                    <a
+                      href={product.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        display: 'inline-block',
+                        padding: '10px 14px',
+                        borderRadius: 12,
+                        textDecoration: 'none',
+                        background: (window.Telegram?.WebApp?.themeParams?.button_color || '#007EE5'),
+                        color: (window.Telegram?.WebApp?.themeParams?.button_text_color || '#ffffff'),
+                        fontWeight: 600,
+                        fontSize: 14,
+                      }}
+                    >
+                      Посмотреть на Wildberries
+                    </a>
+                  </div>
+                )}
 				<div className={styles.description}>
 					<h3>Описание</h3>
 					<p>

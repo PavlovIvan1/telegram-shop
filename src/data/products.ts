@@ -5,6 +5,7 @@ export interface Product {
 	image: string
   images?: string[]
   video?: string
+  link?: string
 	category?: string
 	tags?: string[]
 }

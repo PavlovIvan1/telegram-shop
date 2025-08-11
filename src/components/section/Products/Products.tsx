@@ -14,6 +14,7 @@ interface ApiProduct {
   link_to_photos?: string
   link_to_photo?: string
   link_to_video?: string
+  link?: string
 }
 
 export function Products() {
@@ -84,6 +85,7 @@ export function Products() {
           image: first,
           images: list.length > 0 ? list : undefined,
           video: item.link_to_video || undefined,
+          link: item.link || undefined,
           category: '',
           tags: [],
         }
