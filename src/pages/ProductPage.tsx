@@ -124,8 +124,6 @@
 // 	)
 // }
 
-import 'keen-slider/keen-slider.min.css'
-import { useKeenSlider } from 'keen-slider/react'
 import { ArrowLeft } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
@@ -153,13 +151,6 @@ export function ProductPage() {
 	}, [id, location.state])
 
   const images = product ? (product.images && product.images.length > 0 ? product.images : [product.image].filter(Boolean)) : []
-	const [sliderRef] = useKeenSlider<HTMLDivElement>({
-		loop: true,
-		slides: {
-			perView: 1,
-			spacing: 10,
-		},
-	})
 
 	if (!product) {
 		return (
@@ -196,18 +187,20 @@ export function ProductPage() {
 			</header>
 
             <div className={styles.slider}>
-                <div
-                    ref={sliderRef}
-                    className='keen-slider'
-                    style={{ borderRadius: '12px', overflow: 'hidden' }}
-                >
+                <div style={{
+                    display: 'flex',
+                    overflowX: 'auto',
+                    gap: '8px',
+                    scrollSnapType: 'x mandatory',
+                    borderRadius: '12px'
+                }}>
                     {images.map((src, index) => (
-                        <div className='keen-slider__slide' key={index}>
+                        <div key={index} style={{ minWidth: '100%', scrollSnapAlign: 'start' }}>
                             <img
                                 src={src}
                                 alt={`Фото ${index + 1}`}
                                 onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
-                                style={{ width: '100%', objectFit: 'cover' }}
+                                style={{ width: '100%', objectFit: 'cover', borderRadius: '12px' }}
                             />
                         </div>
                     ))}

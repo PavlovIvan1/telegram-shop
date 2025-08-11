@@ -40,9 +40,10 @@ export function Products() {
 			})
 
 			const handleData = await handleRes.json()
-            if (handleData.status !== 'ok') {
+			if (handleData.status !== 'ok') {
 				throw new Error(handleData.result || 'Ошибка при запросе /handle')
 			}
+
 
 
 			const renderRes = await fetch(`${API_URL}/render`, {
@@ -57,19 +58,12 @@ export function Products() {
 			const renderData = await renderRes.json()
 			console.log('Полученные данные renderData:', renderData)
 
-			function formatPrice(priceNumber: number): string {
+            function formatPrice(priceNumber: number): string {
 				return (
 					priceNumber.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' ₽'
 				)
 			}
 
-  // Restore search from URL and fetch on mount or when ?q= changes
-  useEffect(() => {
-    const q = searchParams.get('q') || ''
-    // Always reflect query param in input
-    if (q !== searchValue) setSearchValue(q)
-    if (q) fetchProducts(q)
-  }, [searchParams])
 
 			// Объединяем left_products и right_products в один массив
 			const leftProducts: ApiProduct[] = renderData.left_products || []
@@ -108,6 +102,14 @@ export function Products() {
 			setLoading(false)
 		}
 	}
+
+	// Restore search from URL and fetch on mount or when ?q= changes
+	useEffect(() => {
+		const q = searchParams.get('q') || ''
+		if (q !== searchValue) setSearchValue(q)
+		if (q) fetchProducts(q)
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [searchParams])
 
 	const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
 		if (e.key === 'Enter') {
