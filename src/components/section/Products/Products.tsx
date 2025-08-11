@@ -9,7 +9,8 @@ interface ApiProduct {
 	nm_id: number
 	name: string
 	price: number
-	link_to_photos?: string
+  link_to_photos?: string
+  link_to_photo?: string
 }
 
 export function Products() {
@@ -65,14 +66,20 @@ export function Products() {
 
 			const combinedProducts: ApiProduct[] = [...leftProducts, ...rightProducts]
 
-			const productsArray: Product[] = combinedProducts.map(item => ({
-				id: item.nm_id.toString(),
-				name: item.name,
-				price: formatPrice(item.price),
-				image: item.link_to_photos?.split(';').filter(Boolean)[0] || '',
-				category: '',
-				tags: [],
-			}))
+      const productsArray: Product[] = combinedProducts.map(item => {
+        const raw = item.link_to_photos || item.link_to_photo || ''
+        const list = raw.split(';').map(s => s.trim()).filter(Boolean)
+        const first = list[0] || ''
+        return {
+          id: item.nm_id.toString(),
+          name: item.name,
+          price: formatPrice(item.price),
+          image: first,
+          images: list.length > 0 ? list : undefined,
+          category: '',
+          tags: [],
+        }
+      })
 
 			// Добавляем товары с бэкенда в глобальное хранилище
 			productsArray.forEach(product => {

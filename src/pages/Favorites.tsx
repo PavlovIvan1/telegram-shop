@@ -377,6 +377,9 @@ export function Favorites() {
 							<img
 								src={product.image}
 								alt={product.name}
+								onError={e => {
+									;(e.currentTarget as HTMLImageElement).style.display = 'none'
+								}}
 								style={{
 									width: '100%',
 									objectFit: 'cover',

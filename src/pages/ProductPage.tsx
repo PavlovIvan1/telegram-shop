@@ -152,7 +152,7 @@ export function ProductPage() {
 		}
 	}, [id, location.state])
 
-	const images = product ? [product.image] : []
+  const images = product ? (product.images && product.images.length > 0 ? product.images : [product.image].filter(Boolean)) : []
 	const [sliderRef] = useKeenSlider<HTMLDivElement>({
 		loop: true,
 		slides: {
@@ -195,23 +195,24 @@ export function ProductPage() {
 				<h1 className={styles.title}>Товар</h1>
 			</header>
 
-			<div className={styles.slider}>
-				<div
-					ref={sliderRef}
-					className='keen-slider'
-					style={{ borderRadius: '12px', overflow: 'hidden' }}
-				>
-					{images.map((src, index) => (
-						<div className='keen-slider__slide' key={index}>
-							<img
-								src={src}
-								alt={`Фото ${index + 1}`}
-								style={{ width: '100%', objectFit: 'cover' }}
-							/>
-						</div>
-					))}
-				</div>
-			</div>
+            <div className={styles.slider}>
+                <div
+                    ref={sliderRef}
+                    className='keen-slider'
+                    style={{ borderRadius: '12px', overflow: 'hidden' }}
+                >
+                    {images.map((src, index) => (
+                        <div className='keen-slider__slide' key={index}>
+                            <img
+                                src={src}
+                                alt={`Фото ${index + 1}`}
+                                onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
+                                style={{ width: '100%', objectFit: 'cover' }}
+                            />
+                        </div>
+                    ))}
+                </div>
+            </div>
 
 			<div className={styles.info}>
 				<h2 className={styles.productName}>{product.name}</h2>

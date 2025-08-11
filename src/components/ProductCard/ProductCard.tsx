@@ -120,7 +120,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
 	return (
 		<div className={styles.card}>
-			<img src={product.image} alt={product.name} />
+			<img src={product.image} alt={product.name} onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
 			<div className={styles.card_info} style={{ marginBottom: '5px' }}>
 				<h3 style={{ marginBottom: '5px' }}>{product.name}</h3>
 				<span>{product.price}</span>
