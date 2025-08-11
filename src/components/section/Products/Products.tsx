@@ -15,6 +15,11 @@ interface ApiProduct {
   link_to_photo?: string
   link_to_video?: string
   link?: string
+  description?: string
+  nmReviewRating?: number
+  nmFeedbacks?: number
+  text_of_last_feedback?: string
+  rate_of_last_feedback?: number
 }
 
 export function Products() {
@@ -86,6 +91,11 @@ export function Products() {
           images: list.length > 0 ? list : undefined,
           video: item.link_to_video || undefined,
           link: item.link || undefined,
+          description: item.description || undefined,
+          rating: item.nmReviewRating || undefined,
+          reviewsCount: item.nmFeedbacks || undefined,
+          lastFeedbackText: item.text_of_last_feedback || undefined,
+          lastFeedbackRecentRating: item.rate_of_last_feedback || undefined,
           category: '',
           tags: [],
         }

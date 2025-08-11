@@ -125,7 +125,7 @@
 // }
 
 import { ArrowLeft } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { BeatLoader } from 'react-spinners'
 import type { Product } from '../data/products'
@@ -153,6 +153,7 @@ export function ProductPage() {
 
   const images = product ? (product.images && product.images.length > 0 ? product.images : [product.image].filter(Boolean)) : []
   const [isLoading, setIsLoading] = useState(true)
+  const videoRef = useRef<HTMLVideoElement | null>(null)
 
   useEffect(() => {
     // считем, что продукт загружен когда setProduct отработал
@@ -175,22 +176,75 @@ export function ProductPage() {
 		)
 	}
 
-	const reviews = [
-		{
-			id: 1,
-			author: 'Анна',
-			rating: 5,
-			text: 'Отличный телефон, камера супер!',
-			date: '10 мая 2025',
-		},
-		{
-			id: 2,
-			author: 'Дмитрий',
-			rating: 4,
-			text: 'Хорошее устройство, но цена высоковата.',
-			date: '5 мая 2025',
-		},
-	]
+  // Lazy-load HLS only when needed and cleanup on unmount
+  useEffect(() => {
+    if (!product || !product.video || !videoRef.current) return
+
+    const videoEl = videoRef.current
+    const videoUrl = product.video as string
+    const isM3U8 = /\.m3u8($|\?)/i.test(videoUrl)
+    let hls: any | null = null
+    // let removed = false
+
+    function attachSource() {
+      // Safari iOS supports HLS natively
+      if (isM3U8 && (videoEl as any).canPlayType && videoEl.canPlayType('application/vnd.apple.mpegurl')) {
+        videoEl.src = videoUrl
+        return
+      }
+
+      if (!isM3U8) {
+        videoEl.src = videoUrl
+        return
+      }
+
+      function loadScriptOnce(src: string): Promise<void> {
+        return new Promise(resolve => {
+          if (document.querySelector(`script[data-hlsjs="true"]`)) return resolve()
+          const s = document.createElement('script')
+          s.src = src
+          s.async = true
+          s.setAttribute('data-hlsjs', 'true')
+          s.onload = () => resolve()
+          s.onerror = () => resolve()
+          document.head.appendChild(s)
+        })
+      }
+
+      loadScriptOnce('https://cdn.jsdelivr.net/npm/hls.js@latest').then(() => {
+        const Hls = (window as any).Hls
+        if (!Hls || !Hls.isSupported()) {
+          // Fallback: set src directly
+          videoEl.src = videoUrl
+          return
+        }
+        hls = new Hls({
+          autoStartLoad: false, // старт загрузки только по действию пользователя (play)
+        })
+        hls.loadSource(videoUrl)
+        hls.attachMedia(videoEl)
+        // начинаем грузить только когда пользователь нажмёт play
+        const onPlay = () => {
+          try { hls && hls.startLoad() } catch {}
+          videoEl.removeEventListener('play', onPlay)
+        }
+        videoEl.addEventListener('play', onPlay)
+      })
+    }
+
+    attachSource()
+
+    return () => {
+      // removed = true
+      try { videoEl.pause() } catch {}
+      try {
+        // очищаем src
+        videoEl.removeAttribute('src')
+        videoEl.load()
+      } catch {}
+      try { hls && hls.destroy && hls.destroy() } catch {}
+    }
+  }, [product])
 
   return (
         <div className={styles.container}>
@@ -210,21 +264,24 @@ export function ProductPage() {
                     borderRadius: '12px'
                 }}>
                     {product.video && (
-                      <div style={{ minWidth: '100%', scrollSnapAlign: 'start' }}>
+                      <div style={{ minWidth: '100%', scrollSnapAlign: 'start', aspectRatio: '16/9' }}>
                         <video
-                          style={{ width: '100%', borderRadius: 12 }}
+                          ref={videoRef}
+                          style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 12 }}
                           controls
-                          src={product.video}
+                          preload="none"
+                          playsInline
+                          // src устанавливается динамически (для HLS) в useEffect
                         />
                       </div>
                     )}
                     {images.map((src, index) => (
-                        <div key={index} style={{ minWidth: '100%', scrollSnapAlign: 'start' }}>
+                        <div key={index} style={{ minWidth: '100%', scrollSnapAlign: 'start', aspectRatio: '16/9' }}>
                             <img
                                 src={src}
                                 alt={`Фото ${index + 1}`}
                                 onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
-                                style={{ width: '100%', objectFit: 'cover', borderRadius: '12px' }}
+                                style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '12px' }}
                             />
                         </div>
                     ))}
@@ -255,27 +312,34 @@ export function ProductPage() {
                     </a>
                   </div>
                 )}
-				<div className={styles.description}>
-					<h3>Описание</h3>
-					<p>
-						{product.name} — это мощное устройство с отличной камерой, высокой
-						производительностью и стильным дизайном.
-					</p>
-				</div>
+                {product.description && (
+                  <div className={styles.description}>
+                      <h3>Описание</h3>
+                      <p>{product.description}</p>
+                  </div>
+                )}
 			</div>
 
 			<div className={styles.reviews}>
-				<h3>Отзывы ({reviews.length})</h3>
-				{reviews.map(review => (
-					<div key={review.id} className={styles.review}>
-						<div className={styles.reviewHeader}>
-							<strong>{review.author}</strong>
-							<span>{'⭐'.repeat(review.rating)}</span>
-							<small>{review.date}</small>
-						</div>
-						<p className={styles.reviewText}>{review.text}</p>
-					</div>
-				))}
+                <h3>Отзывы {product.reviewsCount ? `(${product.reviewsCount})` : ''}</h3>
+                {(product.rating || product.lastFeedbackText) ? (
+                  <div className={styles.review}>
+                    <div className={styles.reviewHeader}>
+                      <strong>Оценка</strong>
+                      {product.rating && <span>{'⭐'.repeat(Math.round(product.rating))} {product.rating}</span>}
+                      {product.lastFeedbackRecentRating && (
+                        <small>Последняя: {'⭐'.repeat(product.lastFeedbackRecentRating)}</small>
+                      )}
+                    </div>
+                    {product.lastFeedbackText && (
+                      <p className={styles.reviewText}>{product.lastFeedbackText}</p>
+                    )}
+                  </div>
+                ) : (
+                  <div className={styles.review}>
+                    <p className={styles.reviewText}>Пока нет отзывов</p>
+                  </div>
+                )}
 			</div>
         </div>
     )

@@ -6,6 +6,11 @@ export interface Product {
   images?: string[]
   video?: string
   link?: string
+  description?: string
+  rating?: number
+  reviewsCount?: number
+  lastFeedbackText?: string
+  lastFeedbackRecentRating?: number
 	category?: string
 	tags?: string[]
 }
