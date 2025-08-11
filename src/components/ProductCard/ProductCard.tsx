@@ -87,6 +87,7 @@ import { ArrowBigRight, Heart } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import type { Product } from '../../data/products'
+import { getFavorites, toggleFavorite } from '../../utils/favoritesStorage'
 import { Button } from '../ui/Button/Button'
 import { FavoriteButton } from '../ui/FavoriteButton/FavoriteButton'
 import heartStyles from '../ui/FavoriteButton/FavoriteButton.module.css'
@@ -99,37 +100,23 @@ interface ProductCardProps {
 export function ProductCard({ product }: ProductCardProps) {
 	const [isFavorite, setIsFavorite] = useState(false)
 
-	useEffect(() => {
-		try {
-			const stored = localStorage.getItem('favorites') || '[]'
-			const favorites = JSON.parse(stored) as string[]
+  useEffect(() => {
+    let mounted = true
+    ;(async () => {
+      const favorites = await getFavorites()
+      if (mounted) setIsFavorite(favorites.includes(String(product.id)))
+    })()
+    return () => {
+      mounted = false
+    }
+  }, [product.id])
 
-			setIsFavorite(favorites.includes(String(product.id)))
-		} catch (e) {
-			console.error(
-				'[ProductCard] error parsing favorites from localStorage',
-				e
-			)
-			setIsFavorite(false)
-		}
-	}, [product.id])
-
-	const handleFavoriteClick = () => {
-		window.Telegram?.WebApp?.HapticFeedback?.impactOccurred('light')
-
-		const stored = localStorage.getItem('favorites') || '[]'
-		const favorites = JSON.parse(stored) as string[]
-
-		const newFavorites = isFavorite
-			? favorites.filter(id => id !== String(product.id))
-			: [...favorites, String(product.id)]
-
-		localStorage.setItem('favorites', JSON.stringify(newFavorites))
-		setIsFavorite(!isFavorite)
-
-		// Отправляем событие об обновлении избранного
-		window.dispatchEvent(new CustomEvent('favoritesUpdated'))
-	}
+  const handleFavoriteClick = async () => {
+    window.Telegram?.WebApp?.HapticFeedback?.impactOccurred('light')
+    await toggleFavorite(String(product.id))
+    const favorites = await getFavorites()
+    setIsFavorite(favorites.includes(String(product.id)))
+  }
 
 	return (
 		<div className={styles.card}>
@@ -148,7 +135,7 @@ export function ProductCard({ product }: ProductCardProps) {
 				<FavoriteButton
 					w='36px'
 					h='36px'
-					bgColor={isFavorite ? '#ff3b30' : '#007EE5'}
+          bgColor={isFavorite ? '#ff3b30' : undefined}
 					onClick={handleFavoriteClick}
 					style={{
 						borderRadius: '50%',

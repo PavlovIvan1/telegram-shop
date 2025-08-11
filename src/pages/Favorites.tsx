@@ -304,50 +304,31 @@ import { FavoriteButton } from '../components/ui/FavoriteButton/FavoriteButton'
 import heartStyles from '../components/ui/FavoriteButton/FavoriteButton.module.css'
 import type { Product } from '../data/products'
 import { getProductById } from '../data/products'
+import { getFavorites, removeFavorite } from '../utils/favoritesStorage'
 import styles from './Favorites.module.css'
 
 export function Favorites() {
 	const [favoriteProducts, setFavoriteProducts] = useState<Product[]>([])
 
-	const removeFromFavorites = (productId: string) => {
-		const stored = localStorage.getItem('favorites') || '[]'
-		const favorites = JSON.parse(stored) as string[]
-		const newFavorites = favorites.filter(id => id !== String(productId))
-		localStorage.setItem('favorites', JSON.stringify(newFavorites))
-		
-		// Обновляем список избранных
-		loadFavorites()
-	}
+  const removeFromFavorites = async (productId: string) => {
+    await removeFavorite(String(productId))
+    loadFavorites()
+  }
 
-	const loadFavorites = useCallback(() => {
-		try {
-			const raw = localStorage.getItem('favorites')
-			console.log('[Favorites] raw favorites from localStorage:', raw)
-			const favorites = JSON.parse(raw || '[]') as string[]
-			console.log('[Favorites] parsed favorites:', favorites)
-
-			const items = favorites
-				.map(id => {
-					const p = getProductById(String(id))
-					if (!p)
-						console.warn(`[Favorites] product not found for id="${id}"`)
-					return p ?? null
-				})
-				.filter((p): p is Product => p !== null)
-
-			console.log(
-				'[Favorites] mapped products:',
-				items.map(p => p.id)
-			)
-			setFavoriteProducts(items)
-		} catch (err) {
-			console.error(
-				'[Favorites] error reading favorites from localStorage',
-				err
-			)
-			setFavoriteProducts([])
-		}
-	}, [])
+  const loadFavorites = useCallback(() => {
+    ;(async () => {
+      try {
+        const favorites = await getFavorites()
+        const items = favorites
+          .map(id => getProductById(String(id)) ?? null)
+          .filter((p): p is Product => p !== null)
+        setFavoriteProducts(items)
+      } catch (err) {
+        console.error('[Favorites] error reading favorites', err)
+        setFavoriteProducts([])
+      }
+    })()
+  }, [])
 
 	useEffect(() => {
 		loadFavorites()

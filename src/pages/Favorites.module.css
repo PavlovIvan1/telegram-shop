@@ -1,6 +1,6 @@
 /* pages/Favorites.module.css */
 .favoriteCard {
-	background: var(--bg, #fff);
+    background: var(--tg-theme-secondary-bg-color);
 	border-radius: 16px;
 	overflow: hidden;
 	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);

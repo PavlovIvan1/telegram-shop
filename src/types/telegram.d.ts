@@ -26,7 +26,23 @@ declare global {
 				backgroundColor?: string
 				headerColor?: string
 				backButtonColor?: string
-				BottomBar?: { backgroundColor?: string }
+					BottomBar?: { backgroundColor?: string }
+
+					CloudStorage?: {
+						getItem: (
+							key: string,
+							callback: (err: unknown, value?: string | null) => void
+						) => void
+						setItem: (
+							key: string,
+							value: string,
+							callback: (err: unknown, ok?: boolean) => void
+						) => void
+						removeItem: (
+							key: string,
+							callback: (err: unknown, ok?: boolean) => void
+						) => void
+					}
 
 				// --- Методы ---
 				/**
