@@ -296,7 +296,6 @@
 // 		</div>
 // 	)
 // }
-
 // pages/Favorites.tsx
 import { Heart } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
