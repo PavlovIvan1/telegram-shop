@@ -7,8 +7,8 @@ type CloudStorageAPI = {
 const FAVORITES_KEY = 'favorites'
 
 function getCloud(): CloudStorageAPI | undefined {
-  // @ts-expect-error: Telegram types may be incomplete at runtime
-  return window.Telegram?.WebApp?.CloudStorage
+  const cloud = window.Telegram?.WebApp?.CloudStorage
+  return (cloud as unknown as CloudStorageAPI) || undefined
 }
 
 function parseList(value: string | null | undefined): string[] {
