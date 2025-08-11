@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { API_URL } from '../../../constants/url.constants'
 import type { Product } from '../../../data/products'
 import { addBackendProduct } from '../../../data/products'
@@ -14,7 +15,8 @@ interface ApiProduct {
 }
 
 export function Products() {
-	const [searchValue, setSearchValue] = useState('')
+    const [searchParams, setSearchParams] = useSearchParams()
+    const [searchValue, setSearchValue] = useState('')
 	const [sortOption, setSortOption] = useState('name-asc')
 	const [filterCategory, setFilterCategory] = useState('')
 	const [products, setProducts] = useState<Product[]>([])
@@ -41,6 +43,15 @@ export function Products() {
 			if (handleData.status !== 'ok') {
 				throw new Error(handleData.result || 'Ошибка при запросе /handle')
 			}
+
+    // Restore search from URL and fetch on mount or when ?q= changes
+    useEffect(() => {
+        const q = searchParams.get('q') || ''
+        if (q && q !== searchValue) {
+            setSearchValue(q)
+            fetchProducts(q)
+        }
+    }, [searchParams])
 
 			const renderRes = await fetch(`${API_URL}/render`, {
 				method: 'POST',
@@ -101,7 +112,11 @@ export function Products() {
 	const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
 		if (e.key === 'Enter') {
 			console.log('Нажат Enter, запускаем поиск')
-			fetchProducts(searchValue)
+            fetchProducts(searchValue)
+            const next = new URLSearchParams(searchParams)
+            if (searchValue) next.set('q', searchValue)
+            else next.delete('q')
+            setSearchParams(next)
 		}
 	}
 
