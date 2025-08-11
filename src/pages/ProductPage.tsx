@@ -186,8 +186,8 @@ export function ProductPage() {
 		},
 	]
 
-	return (
-		<div className={styles.container}>
+  return (
+        <div className={styles.container}>
 			<header className={styles.header}>
 				<button className={styles.backButton} onClick={() => navigate(-1)}>
 					<ArrowLeft size={20} />
@@ -239,6 +239,6 @@ export function ProductPage() {
 					</div>
 				))}
 			</div>
-		</div>
-	)
+        </div>
+    )
 }
