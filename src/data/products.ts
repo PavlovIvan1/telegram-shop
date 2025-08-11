@@ -4,6 +4,7 @@ export interface Product {
 	price: string
 	image: string
   images?: string[]
+  video?: string
 	category?: string
 	tags?: string[]
 }

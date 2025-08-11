@@ -23,15 +23,15 @@ export function MobileNavbar() {
 			}}
 		>
 			<div className={styles.container}>
-				<Link
-					to='/search'
+                <Link
+                    to={{ pathname: '/search', search: window.location.search }}
 					className={`${styles.link} ${isSearchActive ? styles.active : ''}`}
 					style={{ color: isSearchActive ? accentColor : textColor }}
 				>
 					🔍 Поиск
 				</Link>
 				<Link
-					to='/favorites'
+                    to={{ pathname: '/favorites', search: window.location.search }}
 					className={`${styles.link} ${isFavoritesActive ? styles.active : ''}`}
 					style={{ color: isFavoritesActive ? accentColor : textColor }}
 				>

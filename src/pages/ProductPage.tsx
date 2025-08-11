@@ -222,6 +222,16 @@ export function ProductPage() {
                 </div>
             </div>
 
+            {product.video && (
+              <div style={{ marginTop: 12 }}>
+                <video
+                  style={{ width: '100%', borderRadius: 12 }}
+                  controls
+                  src={product.video}
+                />
+              </div>
+            )}
+
 			<div className={styles.info}>
 				<h2 className={styles.productName}>{product.name}</h2>
 				<div className={styles.price}>{product.price}</div>

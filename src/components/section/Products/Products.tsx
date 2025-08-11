@@ -13,6 +13,7 @@ interface ApiProduct {
 	price: number
   link_to_photos?: string
   link_to_photo?: string
+  link_to_video?: string
 }
 
 export function Products() {
@@ -82,6 +83,7 @@ export function Products() {
           price: formatPrice(item.price),
           image: first,
           images: list.length > 0 ? list : undefined,
+          video: item.link_to_video || undefined,
           category: '',
           tags: [],
         }
