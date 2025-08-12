@@ -1,69 +1,207 @@
-# React + TypeScript + Vite
+# 🛍️ Telegram Shop
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Современное веб-приложение для интернет-магазина, интегрированное с Telegram WebApp. Построено на React 19, TypeScript и Vite для быстрой разработки и отличного пользовательского опыта.
 
-Currently, two official plugins are available:
+## ✨ Особенности
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 🚀 **React 19** - последняя версия React с новыми возможностями
+- 🔧 **TypeScript** - типизированный JavaScript для надежности кода
+- ⚡ **Vite** - быстрый сборщик и dev-сервер
+- 📱 **Telegram WebApp Integration** - нативная интеграция с Telegram
+- 🎨 **Современный UI** - красивые компоненты с использованием Lucide React
+- 📱 **Адаптивный дизайн** - оптимизирован для мобильных устройств
+- 🎠 **Интерактивные слайдеры** - Keen Slider и Swiper для галерей
+- 🔍 **Поиск и фильтрация** - удобный поиск товаров
+- ❤️ **Избранное** - система сохранения любимых товаров
+- 🛒 **Детальные страницы товаров** - полная информация о продуктах
 
-## Expanding the ESLint configuration
+## 🛠️ Технологии
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Frontend**: React 19, TypeScript
+- **Сборка**: Vite 7
+- **Стилизация**: CSS3, CSS Modules
+- **Маршрутизация**: React Router DOM 7
+- **UI компоненты**: Lucide React, React Spinners
+- **Слайдеры**: Keen Slider, Swiper
+- **Линтинг**: ESLint 9, TypeScript ESLint
+- **Пакетный менеджер**: Bun (совместимо с npm/yarn)
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 📋 Требования
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+- Node.js 18+ или Bun 1.0+
+- npm, yarn или bun
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 🚀 Быстрый старт
+
+### 1. Клонирование репозитория
+
+```bash
+git clone https://github.com/your-username/telegram-shop.git
+cd telegram-shop
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 2. Установка зависимостей
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+**С Bun (рекомендуется):**
+```bash
+bun install
 ```
+
+**С npm:**
+```bash
+npm install
+```
+
+**С yarn:**
+```bash
+yarn install
+```
+
+### 3. Запуск в режиме разработки
+
+**С Bun:**
+```bash
+bun run dev
+```
+
+**С npm:**
+```bash
+npm run dev
+```
+
+**С yarn:**
+```bash
+yarn dev
+```
+
+Приложение будет доступно по адресу: [http://localhost:5173](http://localhost:5173)
+
+## 📁 Структура проекта
+
+```
+telegram-shop/
+├── src/
+│   ├── components/          # Переиспользуемые UI компоненты
+│   │   ├── ui/             # Базовые UI компоненты (Button, etc.)
+│   │   └── section/        # Секционные компоненты (Navbar, etc.)
+│   ├── pages/              # Страницы приложения
+│   │   ├── Home.tsx        # Главная страница
+│   │   ├── ProductPage.tsx # Страница товара
+│   │   └── Favorites.tsx   # Страница избранного
+│   ├── services/           # API сервисы и внешние интеграции
+│   ├── utils/              # Вспомогательные функции
+│   ├── types/              # TypeScript типы и интерфейсы
+│   ├── constants/          # Константы приложения
+│   ├── data/               # Статические данные
+│   ├── assets/             # Изображения, иконки, стили
+│   ├── App.tsx             # Главный компонент приложения
+│   └── main.tsx            # Точка входа
+├── public/                 # Статические файлы
+├── dist/                   # Сборка для продакшена
+├── package.json            # Зависимости и скрипты
+├── vite.config.ts          # Конфигурация Vite
+├── tsconfig.json           # Конфигурация TypeScript
+└── README.md               # Документация
+```
+
+## 🚀 Доступные скрипты
+
+| Команда | Описание |
+|---------|----------|
+| `dev` | Запуск dev-сервера с hot reload |
+| `build` | Сборка проекта для продакшена |
+| `preview` | Предварительный просмотр собранного проекта |
+| `lint` | Проверка кода с ESLint |
+
+## 🔧 Конфигурация
+
+### Vite
+Файл `vite.config.ts` настроен для React с SWC плагином для быстрой компиляции.
+
+### TypeScript
+- `tsconfig.json` - основная конфигурация
+- `tsconfig.app.json` - конфигурация для приложения
+- `tsconfig.node.json` - конфигурация для Node.js окружения
+
+### ESLint
+Настроен для React и TypeScript с современными правилами линтинга.
+
+## 📱 Telegram WebApp Integration
+
+Приложение интегрировано с Telegram WebApp API:
+
+```typescript
+// Инициализация Telegram WebApp
+if (window.Telegram?.WebApp) {
+  window.Telegram.WebApp.ready()
+}
+```
+
+## 🎨 UI Компоненты
+
+- **Button** - универсальная кнопка с настраиваемыми размерами
+- **MobileNavbar** - мобильная навигация
+- **Слайдеры** - интерактивные галереи товаров
+- **Spinners** - индикаторы загрузки
+
+## 🌐 Маршрутизация
+
+- `/` - Главная страница
+- `/search` - Поиск товаров
+- `/favorites` - Избранные товары
+- `/product/:id` - Страница товара
+
+## 📦 Сборка для продакшена
+
+```bash
+# Сборка
+bun run build
+
+# Предварительный просмотр
+bun run preview
+```
+
+Собранные файлы будут в директории `dist/`.
+
+## 🔍 Разработка
+
+### Добавление новых страниц
+
+1. Создайте компонент в `src/pages/`
+2. Добавьте маршрут в `src/App.tsx`
+3. Обновите навигацию при необходимости
+
+### Добавление новых компонентов
+
+1. Создайте компонент в `src/components/`
+2. Экспортируйте из `src/components/index.ts`
+3. Импортируйте где необходимо
+
+## 🐛 Отладка
+
+### Логирование
+Включено логирование для Telegram WebApp интеграции.
+
+### DevTools
+Используйте React DevTools для отладки компонентов.
+
+## 📝 Лицензия
+
+Этот проект является приватным.
+
+## 🤝 Вклад в проект
+
+1. Форкните репозиторий
+2. Создайте ветку для новой функции
+3. Внесите изменения
+4. Создайте Pull Request
+
+## 📞 Поддержка
+
+Если у вас есть вопросы или проблемы:
+- Создайте Issue в репозитории
+- Обратитесь к команде разработки
+
+---
+
+**Счастливой разработки! 🚀**
