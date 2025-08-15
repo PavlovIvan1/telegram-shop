@@ -10,7 +10,7 @@ export function Products() {
     const [searchParams, setSearchParams] = useSearchParams()
     const [searchValue, setSearchValue] = useState('')
 	const [sortOption, setSortOption] = useState('name-asc')
-	const [filterCategory, setFilterCategory] = useState('')
+	const [filterCategory] = useState('')
 
 	// Используем debounce для поиска
 	const { debouncedSearch, isSearching, shouldSearch } = useSearchDebounce(
@@ -40,6 +40,19 @@ export function Products() {
 		const q = searchParams.get('q') || ''
 		if (q !== searchValue) setSearchValue(q)
 	}, [searchParams, searchValue])
+
+	// Отладочная информация
+	useEffect(() => {
+		console.log('Products Debug:', {
+			searchValue,
+			debouncedSearch,
+			isSearching,
+			shouldSearch,
+			productsCount: products.length,
+			isLoading,
+			error: error?.message
+		})
+	}, [searchValue, debouncedSearch, isSearching, shouldSearch, products.length, isLoading, error])
 
 	// Мемоизируем фильтрацию
 	const filteredProducts = useMemo(() => {
@@ -96,17 +109,43 @@ export function Products() {
 		<div style={{ padding: '20px', color: 'red' }}>Ошибка: {error?.message}</div>
 	), [error?.message])
 
-	// Показываем загрузку если загружается или идет поиск
-	if (isLoading || isSearching) {
-        return loadingComponent
-    }
-	
-	if (error) {
-		return errorComponent
-	}
+	// Мемоизируем индикатор поиска
+	const searchIndicator = useMemo(() => {
+		if (!searchValue || searchValue.length < 2) return null
+		
+		return (
+			<div style={{ 
+				padding: '8px 16px', 
+				textAlign: 'center', 
+				color: '#666',
+				fontSize: '14px',
+				backgroundColor: '#f5f5f5',
+				borderRadius: '8px',
+				margin: '8px 10px'
+			}}>
+				{isSearching ? 'Поиск...' : `Найдено товаров: ${sortedProducts.length}`}
+			</div>
+		)
+	}, [searchValue, isSearching, sortedProducts.length])
 
 	return (
 		<div>
+			{/* Отладочная информация в разработке */}
+			{import.meta.env.DEV && (
+				<div style={{ 
+					padding: '8px', 
+					backgroundColor: '#f0f0f0', 
+					fontSize: '12px', 
+					fontFamily: 'monospace',
+					borderBottom: '1px solid #ccc'
+				}}>
+					Search: "{searchValue}" | Debounced: "{debouncedSearch}" | 
+					Searching: {isSearching ? 'Yes' : 'No'} | 
+					Products: {products.length} | 
+					Filtered: {filteredProducts.length}
+				</div>
+			)}
+
 			<TopBar
 				searchValue={searchValue}
 				onSearchChange={e => setSearchValue(e.target.value)}
@@ -114,37 +153,47 @@ export function Products() {
 				sortOption={sortOption}
 				onSortChange={setSortOption}
 				filterCategory={filterCategory}
-				onFilterChange={setFilterCategory}
+				onFilterChange={() => {}} // Временно отключаем фильтры
 			/>
 
-			<div
-				style={{
-					display: 'flex',
-					justifyContent: 'space-between',
-					flexWrap: 'wrap',
-					padding: '0 10px',
-					gap: '8px',
-					marginTop: '8px',
-				}}
-			>
-				{sortedProducts.length === 0 ? (
-					<div
-						style={{
-							width: '100%',
-							textAlign: 'center',
-							color: '#999',
-							padding: '20px',
-							fontSize: '14px',
-						}}
-					>
-						{searchValue ? 'Ничего не найдено' : 'Введите поисковый запрос'}
-					</div>
-				) : (
-					sortedProducts.map(product => (
-						<ProductCard key={product.id} product={product} />
-					))
-				)}
-			</div>
+			{/* Индикатор поиска */}
+			{searchIndicator}
+
+			{/* Показываем загрузку только для контента, не для всего компонента */}
+			{isLoading ? (
+				loadingComponent
+			) : error ? (
+				errorComponent
+			) : (
+				<div
+					style={{
+						display: 'flex',
+						justifyContent: 'space-between',
+						flexWrap: 'wrap',
+						padding: '0 10px',
+						gap: '8px',
+						marginTop: '8px',
+					}}
+				>
+					{sortedProducts.length === 0 ? (
+						<div
+							style={{
+								width: '100%',
+								textAlign: 'center',
+								color: '#999',
+								padding: '20px',
+								fontSize: '14px',
+							}}
+						>
+							{searchValue ? 'Ничего не найдено' : 'Введите поисковый запрос'}
+						</div>
+					) : (
+						sortedProducts.map(product => (
+							<ProductCard key={product.id} product={product} />
+						))
+					)}
+				</div>
+			)}
 		</div>
 	)
 }
