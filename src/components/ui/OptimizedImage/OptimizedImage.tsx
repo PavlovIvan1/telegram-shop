@@ -28,7 +28,7 @@ export const OptimizedImage = memo(forwardRef<HTMLImageElement, OptimizedImagePr
 		onClick,
 		...props 
 	}, ref) => {
-		const { isLoaded, error, currentSrc, loadImage } = useImageOptimization(src, {
+		const { isLoaded, currentSrc } = useImageOptimization(src, {
 			preload,
 			lazy,
 			placeholder,

@@ -10,7 +10,7 @@ export function useImageOptimization(
 	src: string,
 	options: UseImageOptimizationOptions = {}
 ) {
-	const { preload = false, lazy = true, placeholder = '' } = options
+	const { preload = false, placeholder = '' } = options
 	const [isLoaded, setIsLoaded] = useState(false)
 	const [error, setError] = useState(false)
 	const [currentSrc, setCurrentSrc] = useState(placeholder || src)
