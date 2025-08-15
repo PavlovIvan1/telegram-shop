@@ -1,95 +1,12 @@
-// // components/ProductCard/ProductCard.tsx
-// import { ArrowBigRight, Heart } from 'lucide-react'
-// import { useEffect, useState } from 'react'
-// import { Link } from 'react-router-dom'
-// import type { Product } from '../../data/products'
-// import { Button } from '../ui/Button/Button'
-// import { FavoriteButton } from '../ui/FavoriteButton/FavoriteButton'
-// import heartStyles from '../ui/FavoriteButton/FavoriteButton.module.css'
-// import styles from './ProductCard.module.css'
-
-// interface ProductCardProps {
-// 	product: Product
-// }
-
-// export function ProductCard({ product }: ProductCardProps) {
-// 	const [isFavorite, setIsFavorite] = useState(false)
-// 	// const navigate = useNavigate()
-
-// 	useEffect(() => {
-// 		const favorites = JSON.parse(localStorage.getItem('favorites') || '[]')
-// 		setIsFavorite(favorites.includes(product.id))
-// 	}, [product.id])
-
-// 	const handleFavoriteClick = () => {
-// 		window.Telegram?.WebApp?.HapticFeedback?.impactOccurred('light')
-
-// 		const favorites = JSON.parse(localStorage.getItem('favorites') || '[]')
-// 		const newFavorites = isFavorite
-// 			? favorites.filter((id: string) => id !== product.id)
-// 			: [...favorites, product.id]
-
-// 		localStorage.setItem('favorites', JSON.stringify(newFavorites))
-// 		setIsFavorite(!isFavorite)
-// 	}
-
-// 	return (
-// 		<div className={styles.card}>
-// 			<img src={product.image} alt={product.name} />
-// 			<div className={styles.card_info} style={{ marginBottom: '5px' }}>
-// 				<h3 style={{ marginBottom: '5px' }}>{product.name}</h3>
-// 				<span>{product.price}</span>
-// 			</div>
-// 			<div className={styles.card_buttons}>
-// 				{/* <Button
-// 					w='36px'
-// 					h='36px'
-// 					onClick={() => navigate(`/product/${product.id}`, { state: product })}
-// 				>
-// 					<ArrowBigRight size={20} />
-// 				</Button> */}
-
-// 				<Link to={`/product/${product.id}`} state={{ product }}>
-// 					<Button w='36px' h='36px'>
-// 						<ArrowBigRight size={20} />
-// 					</Button>
-// 				</Link>
-
-// 				<FavoriteButton
-// 					w='36px'
-// 					h='36px'
-// 					bgColor={isFavorite ? '#ff3b30' : '#007EE5'}
-// 					onClick={handleFavoriteClick}
-// 					style={{
-// 						borderRadius: '50%',
-// 						display: 'flex',
-// 						justifyContent: 'center',
-// 						alignItems: 'center',
-// 						color: '#fff',
-// 					}}
-// 				>
-// 					<span className={heartStyles.heartIcon}>
-// 						<Heart
-// 							size={16}
-// 							fill='currentColor'
-// 							stroke={isFavorite ? 'white' : 'none'}
-// 							strokeWidth='2'
-// 						/>
-// 					</span>
-// 				</FavoriteButton>
-// 			</div>
-// 		</div>
-// 	)
-// }
-
 // components/ProductCard/ProductCard.tsx
 import { ArrowBigRight, Heart } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { memo, useCallback, useEffect, useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import type { Product } from '../../data/products'
 import { getFavorites, toggleFavorite } from '../../utils/favoritesStorage'
 import { Button } from '../ui/Button/Button'
 import { FavoriteButton } from '../ui/FavoriteButton/FavoriteButton'
+import { OptimizedImage } from '../ui/OptimizedImage'
 import heartStyles from '../ui/FavoriteButton/FavoriteButton.module.css'
 import styles from './ProductCard.module.css'
 
@@ -97,30 +14,59 @@ interface ProductCardProps {
 	product: Product
 }
 
-export function ProductCard({ product }: ProductCardProps) {
+export const ProductCard = memo(function ProductCard({ product }: ProductCardProps) {
 	const [isFavorite, setIsFavorite] = useState(false)
 
-  useEffect(() => {
-    let mounted = true
-    ;(async () => {
-      const favorites = await getFavorites()
-      if (mounted) setIsFavorite(favorites.includes(String(product.id)))
-    })()
-    return () => {
-      mounted = false
-    }
-  }, [product.id])
+	// Мемоизируем функцию загрузки избранного
+	const loadFavorites = useCallback(async () => {
+		const favorites = await getFavorites()
+		setIsFavorite(favorites.includes(String(product.id)))
+	}, [product.id])
 
-  const handleFavoriteClick = async () => {
-    window.Telegram?.WebApp?.HapticFeedback?.impactOccurred('light')
-    await toggleFavorite(String(product.id))
-    const favorites = await getFavorites()
-    setIsFavorite(favorites.includes(String(product.id)))
-  }
+	useEffect(() => {
+		let mounted = true
+		;(async () => {
+			if (mounted) {
+				await loadFavorites()
+			}
+		})()
+		return () => {
+			mounted = false
+		}
+	}, [loadFavorites])
+
+	// Мемоизируем функцию клика по избранному
+	const handleFavoriteClick = useCallback(async () => {
+		window.Telegram?.WebApp?.HapticFeedback?.impactOccurred('light')
+		await toggleFavorite(String(product.id))
+		await loadFavorites()
+	}, [product.id, loadFavorites])
+
+	// Мемоизируем стили для изображения
+	const imageStyles = useMemo(() => ({
+		width: '100%',
+		height: 'auto',
+		borderRadius: '8px',
+	}), [])
+
+	// Мемоизируем стили для кнопок
+	const buttonsStyles = useMemo(() => ({
+		borderRadius: '50%',
+		display: 'flex',
+		justifyContent: 'center',
+		alignItems: 'center',
+		color: '#fff',
+	}), [])
 
 	return (
 		<div className={styles.card}>
-			<img src={product.image} alt={product.name} onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
+			<OptimizedImage 
+				src={product.image} 
+				alt={product.name} 
+				style={imageStyles}
+				lazy={true}
+				preload={false}
+			/>
 			<div className={styles.card_info} style={{ marginBottom: '5px' }}>
 				<h3 style={{ marginBottom: '5px' }}>{product.name}</h3>
 				<span>{product.price}</span>
@@ -135,15 +81,9 @@ export function ProductCard({ product }: ProductCardProps) {
 				<FavoriteButton
 					w='36px'
 					h='36px'
-          bgColor={isFavorite ? '#ff3b30' : undefined}
+					bgColor={isFavorite ? '#ff3b30' : undefined}
 					onClick={handleFavoriteClick}
-					style={{
-						borderRadius: '50%',
-						display: 'flex',
-						justifyContent: 'center',
-						alignItems: 'center',
-						color: '#fff',
-					}}
+					style={buttonsStyles}
 				>
 					<span className={heartStyles.heartIcon}>
 						<Heart
@@ -157,4 +97,4 @@ export function ProductCard({ product }: ProductCardProps) {
 			</div>
 		</div>
 	)
-}
+})

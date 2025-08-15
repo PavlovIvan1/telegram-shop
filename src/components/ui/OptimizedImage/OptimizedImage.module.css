@@ -1,0 +1,36 @@
+.image {
+	display: block;
+	max-width: 100%;
+	height: auto;
+}
+
+.imageLoading {
+	opacity: 0.7;
+	filter: blur(1px);
+	transition: all 0.3s ease-in-out;
+}
+
+.imageLoaded {
+	opacity: 1;
+	filter: blur(0);
+}
+
+.imageError {
+	opacity: 0.5;
+	filter: grayscale(1);
+}
+
+.placeholder {
+	background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+	background-size: 200% 100%;
+	animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+	0% {
+		background-position: 200% 0;
+	}
+	100% {
+		background-position: -200% 0;
+	}
+}
