@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { BeatLoader } from 'react-spinners'
 import { useSearchDebounce } from '../../../hooks/useDebounce'
@@ -20,8 +20,8 @@ export function Products() {
 		debouncedSearch || 'айфон'
 	)
 
-	// Мемоизируем функцию поиска
-	const handleSearchKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
+	// Функция поиска
+	const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
 		if (e.key === 'Enter') {
 			console.log('Нажат Enter, запускаем поиск')
             const next = new URLSearchParams(searchParams)
@@ -29,7 +29,7 @@ export function Products() {
             else next.delete('q')
             setSearchParams(next)
 		}
-	}, [searchValue, searchParams, setSearchParams])
+	}
 
 	// Восстанавливаем поиск из URL при монтировании
 	useEffect(() => {
@@ -49,79 +49,71 @@ export function Products() {
 		})
 	}, [searchValue, debouncedSearch, isSearching, products.length, isLoading, error])
 
-	// Мемоизируем фильтрацию
-	const filteredProducts = useMemo(() => {
-		return products
-			.filter(product => {
-				const search = searchValue.toLowerCase().trim()
-				if (!search) return true
+	// Фильтрация
+	const filteredProducts = products
+		.filter(product => {
+			const search = searchValue.toLowerCase().trim()
+			if (!search) return true
 
-				return (
-					product.name.toLowerCase().includes(search) ||
-					product.price.toLowerCase().includes(search) ||
-					product.category?.toLowerCase().includes(search) ||
-					product.tags?.some(tag => tag.toLowerCase().includes(search))
-				)
-			})
-			.filter(product => {
-				if (!filterCategory) return true
-				return product.category === filterCategory
-			})
-	}, [products, searchValue, filterCategory])
-
-	// Мемоизируем функцию парсинга цены
-	const parsePrice = useCallback((priceStr: string): number => {
-		return Number(priceStr.replace(/[^\d]/g, ''))
-	}, [])
-
-	// Мемоизируем сортировку
-	const sortedProducts = useMemo(() => {
-		return [...filteredProducts].sort((a, b) => {
-			switch (sortOption) {
-				case 'name-asc':
-					return a.name.localeCompare(b.name)
-				case 'name-desc':
-					return b.name.localeCompare(a.name)
-				case 'price-asc':
-					return parsePrice(a.price) - parsePrice(b.price)
-				case 'price-desc':
-					return parsePrice(b.price) - parsePrice(a.price)
-				default:
-					return 0
-			}
+			return (
+				product.name.toLowerCase().includes(search) ||
+				product.price.toLowerCase().includes(search) ||
+				product.category?.toLowerCase().includes(search) ||
+				product.tags?.some(tag => tag.toLowerCase().includes(search))
+			)
 		})
-	}, [filteredProducts, sortOption, parsePrice])
+		.filter(product => {
+			if (!filterCategory) return true
+			return product.category === filterCategory
+		})
 
-	// Мемоизируем компонент загрузки
-	const loadingComponent = useMemo(() => (
+	// Функция парсинга цены
+	const parsePrice = (priceStr: string): number => {
+		return Number(priceStr.replace(/[^\d]/g, ''))
+	}
+
+	// Сортировка
+	const sortedProducts = [...filteredProducts].sort((a, b) => {
+		switch (sortOption) {
+			case 'name-asc':
+				return a.name.localeCompare(b.name)
+			case 'name-desc':
+				return b.name.localeCompare(a.name)
+			case 'price-asc':
+				return parsePrice(a.price) - parsePrice(b.price)
+			case 'price-desc':
+				return parsePrice(b.price) - parsePrice(a.price)
+			default:
+				return 0
+		}
+	})
+
+	// Компонент загрузки
+	const loadingComponent = (
 		<div style={{ padding: '24px', display: 'flex', justifyContent: 'center' }}>
 			<BeatLoader color={window.Telegram?.WebApp?.themeParams?.button_color || '#007EE5'} size={10} />
 		</div>
-	), [])
+	)
 
-	// Мемоизируем компонент ошибки
-	const errorComponent = useMemo(() => (
+	// Компонент ошибки
+	const errorComponent = (
 		<div style={{ padding: '20px', color: 'red' }}>Ошибка: {error?.message}</div>
-	), [error?.message])
+	)
 
-	// Мемоизируем индикатор поиска
-	const searchIndicator = useMemo(() => {
-		if (!searchValue.trim()) return null
-		
-		return (
-			<div style={{ 
-				padding: '8px 16px', 
-				textAlign: 'center', 
-				color: '#666',
-				fontSize: '14px',
-				backgroundColor: '#f5f5f5',
-				borderRadius: '8px',
-				margin: '8px 10px'
-			}}>
-				{isSearching ? 'Поиск...' : `Найдено товаров: ${sortedProducts.length}`}
-			</div>
-		)
-	}, [searchValue, isSearching, sortedProducts.length])
+	// Индикатор поиска
+	const searchIndicator = !searchValue.trim() ? null : (
+		<div style={{ 
+			padding: '8px 16px', 
+			textAlign: 'center', 
+			color: '#666',
+			fontSize: '14px',
+			backgroundColor: '#f5f5f5',
+			borderRadius: '8px',
+			margin: '8px 10px'
+		}}>
+			{isSearching ? 'Поиск...' : `Найдено товаров: ${sortedProducts.length}`}
+		</div>
+	)
 
 	return (
 		<div>
@@ -153,7 +145,10 @@ export function Products() {
 					<input
 						type="text"
 						value={searchValue}
-						onChange={(e) => setSearchValue(e.target.value)}
+						onChange={(e) => {
+							console.log('Тестовый input onChange:', e.target.value)
+							setSearchValue(e.target.value)
+						}}
 						placeholder="Тест ввода..."
 						style={{
 							marginLeft: '8px',
@@ -171,7 +166,10 @@ export function Products() {
 
 			<TopBar
 				searchValue={searchValue}
-				onSearchChange={e => setSearchValue(e.target.value)}
+				onSearchChange={(e) => {
+					console.log('TopBar onChange:', e.target.value)
+					setSearchValue(e.target.value)
+				}}
 				onSearchKeyDown={handleSearchKeyDown}
 				sortOption={sortOption}
 				onSortChange={setSortOption}

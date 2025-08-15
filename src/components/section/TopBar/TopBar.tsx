@@ -1,118 +1,3 @@
-// // components/TopBar/TopBar.tsx
-// import { ArrowDownUpIcon, Filter } from 'lucide-react'
-// import { Search } from '../../ui/Search/Search'
-// import styles from './TopBar.module.css'
-
-// export function TopBar() {
-// 	const theme = window.Telegram?.WebApp?.themeParams
-// 	const iconColor = theme?.text_color || '#000000'
-// 	const secondaryBg = theme?.secondary_bg_color || '#f4f4f5'
-
-// 	const handleSort = () => {
-// 		console.log('Сортировка')
-// 		// Можно добавить popup, модалку и т.д.
-// 		window.Telegram?.WebApp?.HapticFeedback?.impactOccurred('light')
-// 	}
-
-// 	const handleFilter = () => {
-// 		console.log('Фильтры')
-// 		window.Telegram?.WebApp?.HapticFeedback?.impactOccurred('medium')
-// 	}
-
-// 	return (
-// 		<div className={styles.topBar}>
-// 			{/* Поиск */}
-// 			<div className={styles.searchSection}>
-// 				<Search />
-// 			</div>
-
-// 			{/* Кнопки справа */}
-// 			<div className={styles.actions}>
-// 				<button
-// 					onClick={handleSort}
-// 					className={styles.iconButton}
-// 					style={{ backgroundColor: secondaryBg }}
-// 					aria-label='Сортировка'
-// 				>
-// 					<ArrowDownUpIcon size={20} color={iconColor} />
-// 				</button>
-
-// 				<button
-// 					onClick={handleFilter}
-// 					className={styles.iconButton}
-// 					style={{ backgroundColor: secondaryBg }}
-// 					aria-label='Фильтры'
-// 				>
-// 					<Filter size={20} color={iconColor} />
-// 				</button>
-// 			</div>
-// 		</div>
-// 	)
-// }
-
-// components/TopBar/TopBar.tsx
-// import { ArrowDownUpIcon, Filter } from 'lucide-react'
-// import { Search } from '../../ui/Search/Search'
-// import styles from './TopBar.module.css'
-
-// interface TopBarProps {
-// 	searchValue: string
-// 	onSearchChange: (e: React.ChangeEvent<HTMLInputElement>) => void
-// 	onSort?: () => void
-// 	onFilter?: () => void
-// }
-
-// export function TopBar({
-// 	searchValue,
-// 	onSearchChange,
-// 	onSort,
-// 	onFilter,
-// }: TopBarProps) {
-// 	const theme = window.Telegram?.WebApp?.themeParams
-// 	const iconColor = theme?.text_color || '#000000'
-// 	const secondaryBg = theme?.secondary_bg_color || '#f4f4f5'
-
-// 	const handleSort = () => {
-// 		onSort?.()
-// 		window.Telegram?.WebApp?.HapticFeedback?.impactOccurred('light')
-// 	}
-
-// 	const handleFilter = () => {
-// 		onFilter?.()
-// 		window.Telegram?.WebApp?.HapticFeedback?.impactOccurred('medium')
-// 	}
-
-// 	return (
-// 		<div className={styles.topBar}>
-// 			{/* Поиск */}
-// 			<div className={styles.searchSection}>
-// 				<Search value={searchValue} onChange={onSearchChange} />
-// 			</div>
-
-// 			{/* Кнопки справа */}
-// 			<div className={styles.actions}>
-// 				<button
-// 					onClick={handleSort}
-// 					className={styles.iconButton}
-// 					style={{ backgroundColor: secondaryBg }}
-// 					aria-label='Сортировка'
-// 				>
-// 					<ArrowDownUpIcon size={20} color={iconColor} />
-// 				</button>
-
-// 				<button
-// 					onClick={handleFilter}
-// 					className={styles.iconButton}
-// 					style={{ backgroundColor: secondaryBg }}
-// 					aria-label='Фильтры'
-// 				>
-// 					<Filter size={20} color={iconColor} />
-// 				</button>
-// 			</div>
-// 		</div>
-// 	)
-// }
-
 // components/TopBar/TopBar.tsx
 import { ArrowDownUpIcon, Filter } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -146,6 +31,11 @@ export function TopBar({
 	const hintColor = theme?.hint_color || '#999999'
 	const secondaryBg = theme?.secondary_bg_color || '#f4f4f5'
 	const buttonColor = theme?.button_color || '#007EE5'
+
+	// Отладочная информация
+	useEffect(() => {
+		console.log('TopBar render:', { searchValue, sortOption, filterCategory })
+	}, [searchValue, sortOption, filterCategory])
 
 	// Закрытие при клике мимо
 	useEffect(() => {
@@ -183,6 +73,20 @@ export function TopBar({
 
 	return (
 		<div className={styles.topBar}>
+			{/* Отладочная информация */}
+			{import.meta.env.DEV && (
+				<div style={{ 
+					padding: '4px', 
+					backgroundColor: '#fff3cd', 
+					fontSize: '10px', 
+					fontFamily: 'monospace',
+					borderBottom: '1px solid #ffc107',
+					color: '#856404'
+				}}>
+					TopBar: searchValue="{searchValue}" | length: {searchValue.length}
+				</div>
+			)}
+
 			{/* Поиск */}
 			<div className={styles.searchSection}>
 				<Search
