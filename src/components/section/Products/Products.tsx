@@ -13,15 +13,11 @@ export function Products() {
 	const [filterCategory] = useState('')
 
 	// Используем debounce для поиска
-	const { debouncedSearch, isSearching, shouldSearch } = useSearchDebounce(
-		searchValue, 
-		300, // 300ms задержка
-		2 // Минимальная длина для поиска
-	)
+	const { debouncedSearch, isSearching } = useSearchDebounce(searchValue, 300)
 
 	// Используем оптимизированный хук для загрузки продуктов
 	const { data: products = [], isLoading, error } = useProducts(
-		shouldSearch ? debouncedSearch : 'айфон'
+		debouncedSearch || 'айфон'
 	)
 
 	// Мемоизируем функцию поиска
@@ -47,12 +43,11 @@ export function Products() {
 			searchValue,
 			debouncedSearch,
 			isSearching,
-			shouldSearch,
 			productsCount: products.length,
 			isLoading,
 			error: error?.message
 		})
-	}, [searchValue, debouncedSearch, isSearching, shouldSearch, products.length, isLoading, error])
+	}, [searchValue, debouncedSearch, isSearching, products.length, isLoading, error])
 
 	// Мемоизируем фильтрацию
 	const filteredProducts = useMemo(() => {
@@ -111,7 +106,7 @@ export function Products() {
 
 	// Мемоизируем индикатор поиска
 	const searchIndicator = useMemo(() => {
-		if (!searchValue || searchValue.length < 2) return null
+		if (!searchValue.trim()) return null
 		
 		return (
 			<div style={{ 
@@ -143,6 +138,34 @@ export function Products() {
 					Searching: {isSearching ? 'Yes' : 'No'} | 
 					Products: {products.length} | 
 					Filtered: {filteredProducts.length}
+				</div>
+			)}
+
+			{/* Тестовый input для диагностики */}
+			{import.meta.env.DEV && (
+				<div style={{ 
+					padding: '8px', 
+					backgroundColor: '#e8f4fd', 
+					borderBottom: '1px solid #007EE5',
+					marginBottom: '8px'
+				}}>
+					<strong>Тестовый ввод:</strong>
+					<input
+						type="text"
+						value={searchValue}
+						onChange={(e) => setSearchValue(e.target.value)}
+						placeholder="Тест ввода..."
+						style={{
+							marginLeft: '8px',
+							padding: '4px 8px',
+							border: '1px solid #007EE5',
+							borderRadius: '4px',
+							fontSize: '14px'
+						}}
+					/>
+					<span style={{ marginLeft: '8px', color: '#666' }}>
+						Длина: {searchValue.length}
+					</span>
 				</div>
 			)}
 

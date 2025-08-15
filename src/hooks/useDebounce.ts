@@ -37,34 +37,38 @@ export function useDebounceCallback<T extends (...args: any[]) => any>(
 	)
 }
 
-// Хук для debounce поиска с минимальной длиной
+// Упрощенный хук для debounce поиска
 export function useSearchDebounce(
 	searchValue: string,
-	delay: number = 300,
-	minLength: number = 2
+	delay: number = 300
 ) {
-	const [debouncedSearch, setDebouncedSearch] = useState('')
+	const [debouncedSearch, setDebouncedSearch] = useState(searchValue)
 	const [isSearching, setIsSearching] = useState(false)
 
 	useEffect(() => {
+		// Если значение пустое, сразу обновляем
+		if (!searchValue.trim()) {
+			setDebouncedSearch('')
+			setIsSearching(false)
+			return
+		}
+
+		// Устанавливаем флаг поиска
+		setIsSearching(true)
+
 		const handler = setTimeout(() => {
-			if (searchValue.length >= minLength) {
-				setDebouncedSearch(searchValue)
-				setIsSearching(true)
-			} else {
-				setDebouncedSearch('')
-				setIsSearching(false)
-			}
+			setDebouncedSearch(searchValue)
+			setIsSearching(false)
 		}, delay)
 
 		return () => {
 			clearTimeout(handler)
 		}
-	}, [searchValue, delay, minLength])
+	}, [searchValue, delay])
 
 	return {
 		debouncedSearch,
 		isSearching,
-		shouldSearch: searchValue.length >= minLength,
+		shouldSearch: searchValue.trim().length > 0,
 	}
 }
