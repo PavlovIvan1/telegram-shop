@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { BeatLoader } from 'react-spinners'
-import { useSearchDebounce } from '../../../hooks/useDebounce'
 import { useProducts } from '../../../hooks/useProducts'
 import { ProductCard } from '../../ProductCard/ProductCard'
 import { TopBar } from '../TopBar/TopBar'
@@ -12,12 +11,9 @@ export function Products() {
 	const [sortOption, setSortOption] = useState('name-asc')
 	const [filterCategory] = useState('')
 
-	// Используем debounce для поиска
-	const { debouncedSearch, isSearching } = useSearchDebounce(searchValue, 300)
-
 	// Используем оптимизированный хук для загрузки продуктов
 	const { data: products = [], isLoading, error } = useProducts(
-		debouncedSearch || 'айфон'
+		searchValue || 'айфон'
 	)
 
 	// Функция поиска
@@ -41,13 +37,11 @@ export function Products() {
 	useEffect(() => {
 		console.log('Products Debug:', {
 			searchValue,
-			debouncedSearch,
-			isSearching,
 			productsCount: products.length,
 			isLoading,
 			error: error?.message
 		})
-	}, [searchValue, debouncedSearch, isSearching, products.length, isLoading, error])
+	}, [searchValue, products.length, isLoading, error])
 
 	// Фильтрация
 	const filteredProducts = products
@@ -80,7 +74,7 @@ export function Products() {
 			case 'name-desc':
 				return b.name.localeCompare(a.name)
 			case 'price-asc':
-				return parsePrice(a.price) - parsePrice(b.price)
+				return parsePrice(a.price) - parsePrice(a.price)
 			case 'price-desc':
 				return parsePrice(b.price) - parsePrice(a.price)
 			default:
@@ -111,7 +105,7 @@ export function Products() {
 			borderRadius: '8px',
 			margin: '8px 10px'
 		}}>
-			{isSearching ? 'Поиск...' : `Найдено товаров: ${sortedProducts.length}`}
+			Найдено товаров: {sortedProducts.length}
 		</div>
 	)
 
@@ -126,10 +120,7 @@ export function Products() {
 					fontFamily: 'monospace',
 					borderBottom: '1px solid #ccc'
 				}}>
-					Search: "{searchValue}" | Debounced: "{debouncedSearch}" | 
-					Searching: {isSearching ? 'Yes' : 'No'} | 
-					Products: {products.length} | 
-					Filtered: {filteredProducts.length}
+					Search: "{searchValue}" | Products: {products.length} | Filtered: {filteredProducts.length}
 				</div>
 			)}
 
