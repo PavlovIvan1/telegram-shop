@@ -65,7 +65,7 @@ export function Products() {
 
 			// Преобразуем API продукты в Product
 			// Теперь все продукты в одном массиве без разделения на left/right
-			const productsArray: Product[] = (handleData.products || []).map((item: ApiProduct) => {
+			const productsArray: Product[] = (handleData.items || []).map((item: ApiProduct) => {
 				const raw = item.link_to_photos || item.link_to_photo || ''
 				const list = raw.split(';').map(s => s.trim()).filter(Boolean)
 				const first = list[0] || ''
