@@ -226,21 +226,6 @@ import { addBackendProduct } from '../../../data/products'
 import { ProductCard } from '../../ProductCard/ProductCard'
 import { TopBar } from '../TopBar/TopBar'
 
-interface ApiProduct {
-  nm_id: number
-  name: string
-  price: number
-  link_to_photos?: string
-  link_to_photo?: string
-  link_to_video?: string
-  link?: string
-  description?: string
-  nmReviewRating?: number
-  nmFeedbacks?: number
-  text_of_last_feedback?: string
-  rate_of_last_feedback?: number
-}
-
 export function Products() {
   const [searchParams, setSearchParams] = useSearchParams()
   const [searchValue, setSearchValue] = useState('')
@@ -273,7 +258,7 @@ export function Products() {
 
       console.log('Полученные данные из /handle:', handleData)
 
-      function formatPrice(priceNumber: number): string {
+      const formatPrice = (priceNumber: number): string => {
         return priceNumber.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' ₽'
       }
 
@@ -306,10 +291,6 @@ export function Products() {
         addBackendProduct(product)
       })
 
-      productsArray.forEach((product, index) => {
-        console.log(`Товар ${index + 1}: ${product.name} — ${product.price}`)
-      })
-
       setProducts(productsArray)
     } catch (err) {
       setError((err as Error).message)
@@ -327,7 +308,6 @@ export function Products() {
 
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      console.log('Нажат Enter, запускаем поиск')
       fetchProducts(searchValue)
       const next = new URLSearchParams(searchParams)
       if (searchValue) next.set('q', searchValue)
@@ -353,7 +333,7 @@ export function Products() {
       return product.category === filterCategory
     })
 
-  function parsePrice(priceStr: string): number {
+  const parsePrice = (priceStr: string): number => {
     return Number(priceStr.replace(/[^\d]/g, ''))
   }
 
@@ -372,14 +352,17 @@ export function Products() {
     }
   })
 
-  if (loading)
+  if (loading) {
     return (
       <div style={{ padding: '24px', display: 'flex', justifyContent: 'center' }}>
         <BeatLoader color={window.Telegram?.WebApp?.themeParams?.button_color || '#007EE5'} size={10} />
       </div>
     )
-  if (error)
+  }
+
+  if (error) {
     return <div style={{ padding: '20px', color: 'red' }}>Ошибка: {error}</div>
+  }
 
   return (
     <div>
