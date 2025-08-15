@@ -1,6 +1,5 @@
 // components/Search/Search.tsx
 import { Search as SearchIcon } from 'lucide-react'
-import { useEffect } from 'react'
 import styles from './Search.module.css'
 
 interface SearchProps {
@@ -16,27 +15,8 @@ export function Search({ value, onChange, onKeyDown }: SearchProps) {
 	const accentColor = theme?.accent_text_color || '#007EE5'
 	const secondaryBg = theme?.secondary_bg_color || '#f4f4f5'
 
-	// Отладочная информация
-	useEffect(() => {
-		console.log('Search component render:', { value, valueLength: value.length })
-	}, [value])
-
 	return (
 		<div className={styles.searchContainer}>
-			{/* Отладочная информация */}
-			{import.meta.env.DEV && (
-				<div style={{ 
-					padding: '2px 4px', 
-					backgroundColor: '#d1ecf1', 
-					fontSize: '8px', 
-					fontFamily: 'monospace',
-					borderBottom: '1px solid #bee5eb',
-					color: '#0c5460'
-				}}>
-					Search: "{value}" | len: {value.length}
-				</div>
-			)}
-
 			<div
 				className={styles.searchWrapper}
 				style={{
@@ -48,10 +28,7 @@ export function Search({ value, onChange, onKeyDown }: SearchProps) {
 				<input
 					type='text'
 					value={value}
-					onChange={(e) => {
-						console.log('Search input onChange:', e.target.value)
-						onChange(e)
-					}}
+					onChange={onChange}
 					onKeyDown={onKeyDown}
 					placeholder='Поиск по товарам...'
 					className={styles.searchInput}

@@ -1,1 +1,0 @@
-export { OptimizedImage } from './OptimizedImage'

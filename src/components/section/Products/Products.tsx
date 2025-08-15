@@ -1,47 +1,138 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { BeatLoader } from 'react-spinners'
-import { useProducts } from '../../../hooks/useProducts'
+import { API_URL } from '../../../constants/url.constants'
+import type { Product } from '../../../data/products'
+import { addBackendProduct } from '../../../data/products'
 import { ProductCard } from '../../ProductCard/ProductCard'
 import { TopBar } from '../TopBar/TopBar'
+
+interface ApiProduct {
+	nm_id: number
+	name: string
+	price: number
+  link_to_photos?: string
+  link_to_photo?: string
+  link_to_video?: string
+  link?: string
+  description?: string
+  nmReviewRating?: number
+  nmFeedbacks?: number
+  text_of_last_feedback?: string
+  rate_of_last_feedback?: number
+}
 
 export function Products() {
     const [searchParams, setSearchParams] = useSearchParams()
     const [searchValue, setSearchValue] = useState('')
 	const [sortOption, setSortOption] = useState('name-asc')
-	const [filterCategory] = useState('')
+	const [filterCategory, setFilterCategory] = useState('')
+	const [products, setProducts] = useState<Product[]>([])
+	const [loading, setLoading] = useState(false)
+	const [error, setError] = useState<string | null>(null)
 
-	// Используем оптимизированный хук для загрузки продуктов
-	const { data: products = [], isLoading, error } = useProducts(
-		searchValue || 'айфон'
-	)
+	const fetchProducts = async (searchText: string) => {
+		console.log('fetchProducts вызван с поиском:', searchText)
+		try {
+			setLoading(true)
+			setError(null)
 
-	// Функция поиска
+			const handleRes = await fetch(`${API_URL}/handle`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					query_id: window.Telegram?.WebApp?.initDataUnsafe?.query_id,
+					user_id: window.Telegram?.WebApp?.initDataUnsafe?.user?.id,
+					search_text: searchText || 'айфон',
+				}),
+			})
+
+			const handleData = await handleRes.json()
+			if (handleData.status !== 'ok') {
+				throw new Error(handleData.result || 'Ошибка при запросе /handle')
+			}
+
+			const renderRes = await fetch(`${API_URL}/render`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					items: handleData.items,
+					keyword: handleData.keyword,
+				}),
+			})
+
+			const renderData = await renderRes.json()
+			console.log('Полученные данные renderData:', renderData)
+
+            function formatPrice(priceNumber: number): string {
+				return (
+					priceNumber.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' ₽'
+				)
+			}
+
+			// Объединяем left_products и right_products в один массив
+			const leftProducts: ApiProduct[] = renderData.left_products || []
+			const rightProducts: ApiProduct[] = renderData.right_products || []
+
+			const combinedProducts: ApiProduct[] = [...leftProducts, ...rightProducts]
+
+      const productsArray: Product[] = combinedProducts.map(item => {
+        const raw = item.link_to_photos || item.link_to_photo || ''
+        const list = raw.split(';').map(s => s.trim()).filter(Boolean)
+        const first = list[0] || ''
+        return {
+          id: item.nm_id.toString(),
+          name: item.name,
+          price: formatPrice(item.price),
+          image: first,
+          images: list.length > 0 ? list : undefined,
+          video: item.link_to_video || undefined,
+          link: item.link || undefined,
+          description: item.description || undefined,
+          rating: item.nmReviewRating || undefined,
+          reviewsCount: item.nmFeedbacks || undefined,
+          lastFeedbackText: item.text_of_last_feedback || undefined,
+          lastFeedbackRecentRating: item.rate_of_last_feedback || undefined,
+          category: '',
+          tags: [],
+        }
+      })
+
+			// Добавляем товары с бэкенда в глобальное хранилище
+			productsArray.forEach(product => {
+				addBackendProduct(product)
+			})
+
+			productsArray.forEach((product, index) => {
+				console.log(`Товар ${index + 1}: ${product.name} — ${product.price}`)
+			})
+
+			setProducts(productsArray)
+		} catch (err) {
+			setError((err as Error).message)
+		} finally {
+			setLoading(false)
+		}
+	}
+
+	// Restore search from URL and fetch on mount or when ?q= changes
+	useEffect(() => {
+		const q = searchParams.get('q') || ''
+		if (q !== searchValue) setSearchValue(q)
+		if (q) fetchProducts(q)
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [searchParams])
+
 	const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
 		if (e.key === 'Enter') {
 			console.log('Нажат Enter, запускаем поиск')
+            fetchProducts(searchValue)
             const next = new URLSearchParams(searchParams)
             if (searchValue) next.set('q', searchValue)
             else next.delete('q')
             setSearchParams(next)
 		}
 	}
-
-	// Восстанавливаем поиск из URL при монтировании
-	useEffect(() => {
-		const q = searchParams.get('q') || ''
-		if (q !== searchValue) setSearchValue(q)
-	}, [searchParams, searchValue])
-
-	// Отладочная информация
-	useEffect(() => {
-		console.log('Products Debug:', {
-			searchValue,
-			productsCount: products.length,
-			isLoading,
-			error: error?.message
-		})
-	}, [searchValue, products.length, isLoading, error])
 
 	// Фильтрация
 	const filteredProducts = products
@@ -61,8 +152,8 @@ export function Products() {
 			return product.category === filterCategory
 		})
 
-	// Функция парсинга цены
-	const parsePrice = (priceStr: string): number => {
+	// Функция для парсинга цены из строки в число
+	function parsePrice(priceStr: string): number {
 		return Number(priceStr.replace(/[^\d]/g, ''))
 	}
 
@@ -74,7 +165,7 @@ export function Products() {
 			case 'name-desc':
 				return b.name.localeCompare(a.name)
 			case 'price-asc':
-				return parsePrice(a.price) - parsePrice(a.price)
+				return parsePrice(a.price) - parsePrice(b.price)
 			case 'price-desc':
 				return parsePrice(b.price) - parsePrice(a.price)
 			default:
@@ -82,130 +173,55 @@ export function Products() {
 		}
 	})
 
-	// Компонент загрузки
-	const loadingComponent = (
-		<div style={{ padding: '24px', display: 'flex', justifyContent: 'center' }}>
-			<BeatLoader color={window.Telegram?.WebApp?.themeParams?.button_color || '#007EE5'} size={10} />
-		</div>
-	)
-
-	// Компонент ошибки
-	const errorComponent = (
-		<div style={{ padding: '20px', color: 'red' }}>Ошибка: {error?.message}</div>
-	)
-
-	// Индикатор поиска
-	const searchIndicator = !searchValue.trim() ? null : (
-		<div style={{ 
-			padding: '8px 16px', 
-			textAlign: 'center', 
-			color: '#666',
-			fontSize: '14px',
-			backgroundColor: '#f5f5f5',
-			borderRadius: '8px',
-			margin: '8px 10px'
-		}}>
-			Найдено товаров: {sortedProducts.length}
-		</div>
-	)
+    if (loading)
+        return (
+            <div style={{ padding: '24px', display: 'flex', justifyContent: 'center' }}>
+                <BeatLoader color={window.Telegram?.WebApp?.themeParams?.button_color || '#007EE5'} size={10} />
+            </div>
+        )
+	if (error)
+		return <div style={{ padding: '20px', color: 'red' }}>Ошибка: {error}</div>
 
 	return (
 		<div>
-			{/* Отладочная информация в разработке */}
-			{import.meta.env.DEV && (
-				<div style={{ 
-					padding: '8px', 
-					backgroundColor: '#f0f0f0', 
-					fontSize: '12px', 
-					fontFamily: 'monospace',
-					borderBottom: '1px solid #ccc'
-				}}>
-					Search: "{searchValue}" | Products: {products.length} | Filtered: {filteredProducts.length}
-				</div>
-			)}
-
-			{/* Тестовый input для диагностики */}
-			{import.meta.env.DEV && (
-				<div style={{ 
-					padding: '8px', 
-					backgroundColor: '#e8f4fd', 
-					borderBottom: '1px solid #007EE5',
-					marginBottom: '8px'
-				}}>
-					<strong>Тестовый ввод:</strong>
-					<input
-						type="text"
-						value={searchValue}
-						onChange={(e) => {
-							console.log('Тестовый input onChange:', e.target.value)
-							setSearchValue(e.target.value)
-						}}
-						placeholder="Тест ввода..."
-						style={{
-							marginLeft: '8px',
-							padding: '4px 8px',
-							border: '1px solid #007EE5',
-							borderRadius: '4px',
-							fontSize: '14px'
-						}}
-					/>
-					<span style={{ marginLeft: '8px', color: '#666' }}>
-						Длина: {searchValue.length}
-					</span>
-				</div>
-			)}
-
 			<TopBar
 				searchValue={searchValue}
-				onSearchChange={(e) => {
-					console.log('TopBar onChange:', e.target.value)
-					setSearchValue(e.target.value)
-				}}
+				onSearchChange={e => setSearchValue(e.target.value)}
 				onSearchKeyDown={handleSearchKeyDown}
 				sortOption={sortOption}
 				onSortChange={setSortOption}
 				filterCategory={filterCategory}
-				onFilterChange={() => {}} // Временно отключаем фильтры
+				onFilterChange={setFilterCategory}
 			/>
 
-			{/* Индикатор поиска */}
-			{searchIndicator}
-
-			{/* Показываем загрузку только для контента, не для всего компонента */}
-			{isLoading ? (
-				loadingComponent
-			) : error ? (
-				errorComponent
-			) : (
-				<div
-					style={{
-						display: 'flex',
-						justifyContent: 'space-between',
-						flexWrap: 'wrap',
-						padding: '0 10px',
-						gap: '8px',
-						marginTop: '8px',
-					}}
-				>
-					{sortedProducts.length === 0 ? (
-						<div
-							style={{
-								width: '100%',
-								textAlign: 'center',
-								color: '#999',
-								padding: '20px',
-								fontSize: '14px',
-							}}
-						>
-							{searchValue ? 'Ничего не найдено' : 'Введите поисковый запрос'}
-						</div>
-					) : (
-						sortedProducts.map(product => (
-							<ProductCard key={product.id} product={product} />
-						))
-					)}
-				</div>
-			)}
+			<div
+				style={{
+					display: 'flex',
+					justifyContent: 'space-between',
+					flexWrap: 'wrap',
+					padding: '0 10px',
+					gap: '8px',
+					marginTop: '8px',
+				}}
+			>
+				{sortedProducts.length === 0 ? (
+					<div
+						style={{
+							width: '100%',
+							textAlign: 'center',
+							color: '#999',
+							padding: '20px',
+							fontSize: '14px',
+						}}
+					>
+						Ничего не найдено
+					</div>
+				) : (
+					sortedProducts.map(product => (
+						<ProductCard key={product.id} product={product} />
+					))
+				)}
+			</div>
 		</div>
 	)
 }

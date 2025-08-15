@@ -32,11 +32,6 @@ export function TopBar({
 	const secondaryBg = theme?.secondary_bg_color || '#f4f4f5'
 	const buttonColor = theme?.button_color || '#007EE5'
 
-	// Отладочная информация
-	useEffect(() => {
-		console.log('TopBar render:', { searchValue, sortOption, filterCategory })
-	}, [searchValue, sortOption, filterCategory])
-
 	// Закрытие при клике мимо
 	useEffect(() => {
 		const handleClickOutside = () => {
@@ -73,20 +68,6 @@ export function TopBar({
 
 	return (
 		<div className={styles.topBar}>
-			{/* Отладочная информация */}
-			{import.meta.env.DEV && (
-				<div style={{ 
-					padding: '4px', 
-					backgroundColor: '#fff3cd', 
-					fontSize: '10px', 
-					fontFamily: 'monospace',
-					borderBottom: '1px solid #ffc107',
-					color: '#856404'
-				}}>
-					TopBar: searchValue="{searchValue}" | length: {searchValue.length}
-				</div>
-			)}
-
 			{/* Поиск */}
 			<div className={styles.searchSection}>
 				<Search

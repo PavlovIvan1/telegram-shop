@@ -39,6 +39,3 @@ export function App() {
 		</>
 	)
 }
-
-// Добавляем default export
-export default App

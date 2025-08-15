@@ -1,14 +1,12 @@
 import { ArrowLeft } from 'lucide-react'
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { BeatLoader } from 'react-spinners'
 import type { Product } from '../data/products'
 import { productMap } from '../data/products'
-import { useProduct } from '../hooks/useProducts'
 import styles from './ProductPage.module.css'
 
-// Мемоизируем компонент для предотвращения лишних ререндеров
-export const ProductPage = memo(function ProductPage() {
+export function ProductPage() {
 	const { id = '' } = useParams()
 	const location = useLocation()
 	const navigate = useNavigate()
@@ -16,80 +14,25 @@ export const ProductPage = memo(function ProductPage() {
 	const [isLoading, setIsLoading] = useState(true)
 	const videoRef = useRef<HTMLVideoElement | null>(null)
 
-	// Используем оптимизированный хук для загрузки продукта
-	const { data: backendProduct, isLoading: isBackendLoading, error: backendError } = useProduct(id)
-
-	// Мемоизируем функцию навигации назад
-	const handleBackClick = useCallback(() => {
-		navigate(-1)
-	}, [navigate])
-
-	// Оптимизируем загрузку продукта
 	useEffect(() => {
-		let mounted = true
-		
-		const loadProduct = async () => {
-			// 1. Сначала пробуем взять товар из location.state
-			if (location.state?.product) {
-				if (mounted) {
-					setProduct(location.state.product)
-					setIsLoading(false)
-				}
-				return
-			}
-			
-			// 2. Если нет, ищем в productMap
-			if (id && productMap[id]) {
-				if (mounted) {
-					setProduct(productMap[id])
-					setIsLoading(false)
-				}
-				return
-			}
-			
-			// 3. Если продукт не найден
-			if (mounted) {
-				setProduct(null)
-				setIsLoading(false)
-			}
+		// 1. Сначала пробуем взять товар из location.state
+		if (location.state?.product) {
+			setProduct(location.state.product)
 		}
-
-		loadProduct()
-
-		return () => {
-			mounted = false
+		// 2. Если нет, ищем в productMap
+		else if (id && productMap[id]) {
+			setProduct(productMap[id])
+		} else {
+			setProduct(null)
 		}
 	}, [id, location.state])
 
-	// Обновляем продукт когда данные с бэкенда загружены
 	useEffect(() => {
-		if (backendProduct && !product) {
-			setProduct(backendProduct)
-			setIsLoading(false)
-		}
-	}, [backendProduct, product])
-
-	// Мемоизируем массив изображений
-	const images = useMemo(() => {
-		if (!product) return []
-		return product.images && product.images.length > 0 
-			? product.images 
-			: [product.image].filter(Boolean)
+		// считаем, что продукт загружен когда setProduct отработал
+		setIsLoading(false)
 	}, [product])
 
-	// Мемоизируем стили для кнопки
-	const buttonStyles = useMemo(() => ({
-		display: 'inline-block',
-		padding: '10px 14px',
-		borderRadius: 12,
-		textDecoration: 'none',
-		background: (window.Telegram?.WebApp?.themeParams?.button_color || '#007EE5'),
-		color: (window.Telegram?.WebApp?.themeParams?.button_text_color || '#ffffff'),
-		fontWeight: 600,
-		fontSize: 14,
-	}), [])
-
-	// Lazy-load HLS только когда нужно и cleanup при размонтировании
+	// Lazy-load HLS only when needed and cleanup on unmount
 	useEffect(() => {
 		if (!product || !product.video || !videoRef.current) return
 
@@ -99,7 +42,7 @@ export const ProductPage = memo(function ProductPage() {
 		let hls: any | null = null
 
 		function attachSource() {
-			// Safari iOS поддерживает HLS нативно
+			// Safari iOS supports HLS natively
 			if (isM3U8 && (videoEl as any).canPlayType && videoEl.canPlayType('application/vnd.apple.mpegurl')) {
 				videoEl.src = videoUrl
 				return
@@ -126,7 +69,7 @@ export const ProductPage = memo(function ProductPage() {
 			loadScriptOnce('https://cdn.jsdelivr.net/npm/hls.js@latest').then(() => {
 				const Hls = (window as any).Hls
 				if (!Hls || !Hls.isSupported()) {
-					// Fallback: устанавливаем src напрямую
+					// Fallback: set src directly
 					videoEl.src = videoUrl
 					return
 				}
@@ -157,33 +100,28 @@ export const ProductPage = memo(function ProductPage() {
 		}
 	}, [product])
 
-	// Мемоизируем компонент загрузки
-	const loadingComponent = useMemo(() => (
-		<div style={{ padding: '24px', display: 'flex', justifyContent: 'center' }}>
-			<BeatLoader color={window.Telegram?.WebApp?.themeParams?.button_color || '#007EE5'} size={10} />
-		</div>
-	), [])
-
-	// Мемоизируем компонент ошибки
-	const errorComponent = useMemo(() => (
-		<div style={{ padding: '20px', textAlign: 'center', color: '#999' }}>
-			{backendError ? `Ошибка загрузки: ${backendError.message}` : 'Товар не найден'}
-		</div>
-	), [backendError])
-
-	// Показываем загрузку если загружается с бэкенда или локально
-	if (isLoading || isBackendLoading) {
-		return loadingComponent
+	if (isLoading) {
+		return (
+			<div style={{ padding: '24px', display: 'flex', justifyContent: 'center' }}>
+				<BeatLoader color={window.Telegram?.WebApp?.themeParams?.button_color || '#007EE5'} size={10} />
+			</div>
+		)
 	}
 
 	if (!product) {
-		return errorComponent
+		return (
+			<div style={{ padding: '20px', textAlign: 'center', color: '#999' }}>
+				Товар не найден
+			</div>
+		)
 	}
+
+	const images = product ? (product.images && product.images.length > 0 ? product.images : [product.image].filter(Boolean)) : []
 
 	return (
 		<div className={styles.container}>
 			<header className={styles.header}>
-				<button className={styles.backButton} onClick={handleBackClick}>
+				<button className={styles.backButton} onClick={() => navigate(-1)}>
 					<ArrowLeft size={20} />
 				</button>
 				<h1 className={styles.title}>Товар</h1>
@@ -236,7 +174,6 @@ export const ProductPage = memo(function ProductPage() {
 									objectFit: 'contain', 
 									borderRadius: '12px' 
 								}}
-								loading="lazy"
 							/>
 						</div>
 					))}
@@ -252,7 +189,16 @@ export const ProductPage = memo(function ProductPage() {
 							href={product.link}
 							target="_blank"
 							rel="noopener noreferrer"
-							style={buttonStyles}
+							style={{
+								display: 'inline-block',
+								padding: '10px 14px',
+								borderRadius: 12,
+								textDecoration: 'none',
+								background: (window.Telegram?.WebApp?.themeParams?.button_color || '#007EE5'),
+								color: (window.Telegram?.WebApp?.themeParams?.button_text_color || '#ffffff'),
+								fontWeight: 600,
+								fontSize: 14,
+							}}
 						>
 							Посмотреть на Wildberries
 						</a>
@@ -289,4 +235,4 @@ export const ProductPage = memo(function ProductPage() {
 			</div>
 		</div>
 	)
-})
+}
