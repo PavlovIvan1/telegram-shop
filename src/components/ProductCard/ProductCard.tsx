@@ -6,6 +6,7 @@ import type { Product } from '../../data/products'
 import { getFavorites, toggleFavorite } from '../../utils/favoritesStorage'
 import { Button } from '../ui/Button/Button'
 import { FavoriteButton } from '../ui/FavoriteButton/FavoriteButton'
+import { LazyImage } from '../ui/LazyImage'
 import heartStyles from '../ui/FavoriteButton/FavoriteButton.module.css'
 import styles from './ProductCard.module.css'
 
@@ -36,10 +37,15 @@ export function ProductCard({ product }: ProductCardProps) {
 
 	return (
 		<div className={styles.card}>
-			<img 
+			<LazyImage 
 				src={product.image} 
-				alt={product.name} 
-				onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
+				alt={product.name}
+				className={styles.cardImage}
+				style={{
+					width: '100%',
+					height: 'auto',
+					borderRadius: '8px',
+				}}
 			/>
 			<div className={styles.card_info} style={{ marginBottom: '5px' }}>
 				<h3 style={{ marginBottom: '5px' }}>{product.name}</h3>

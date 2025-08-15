@@ -4,6 +4,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { BeatLoader } from 'react-spinners'
 import type { Product } from '../data/products'
 import { productMap } from '../data/products'
+import { LazyImage } from '../components/ui/LazyImage'
 import styles from './ProductPage.module.css'
 
 export function ProductPage() {
@@ -164,10 +165,9 @@ export function ProductPage() {
 							minWidth: '100%', 
 							scrollSnapAlign: 'start'
 						}}>
-							<img
+							<LazyImage
 								src={src}
 								alt={`Фото ${index + 1}`}
-								onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
 								style={{ 
 									width: '100%', 
 									height: 'auto', 
