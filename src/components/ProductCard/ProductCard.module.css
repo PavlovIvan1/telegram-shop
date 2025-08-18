@@ -5,20 +5,42 @@
 
 .card {
 	margin-top: 10px;
-	background: var(--color-bg-secondary);
+	/* background: var(--color-bg-secondary); */
 	/* min-width: 130px; */
 	width: 48%;
 	padding: 10px;
 	box-sizing: border-box;
 	border-radius: 0.8rem;
+	/* Добавляем flexbox для выравнивания кнопки по низу */
+	display: flex;
+	flex-direction: column;
+	height: calc(auto + 100px);
 }
 
-/* .card_info span {
-	margin-top: 10px !important;
-	margin-bottom: 10px !important;
-} */
+.card_info {
+	/* Убираем margin-bottom так как теперь используем flexbox */
+	margin-bottom: 0;
+	/* Добавляем flex-grow чтобы информация занимала доступное пространство */
+	flex-grow: 1;
+}
+
+.card_info h3 {
+	margin-bottom: 10px;
+	margin-top: 15px;
+}
+
+.card_price {
+	font-size: 1.2rem;
+	font-weight: 600;
+	margin-bottom: 10px;
+	color: #f44 !important;
+}
 
 .card_buttons {
 	display: flex;
 	gap: 10px;
+}
+
+.card_button {
+	width: 100%;
 }

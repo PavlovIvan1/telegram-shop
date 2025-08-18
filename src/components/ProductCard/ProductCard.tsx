@@ -1,13 +1,13 @@
 // components/ProductCard/ProductCard.tsx
-import { ArrowBigRight, Heart } from 'lucide-react'
+import { Heart } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import type { Product } from '../../data/products'
 import { getFavorites, toggleFavorite } from '../../utils/favoritesStorage'
 import { Button } from '../ui/Button/Button'
 import { FavoriteButton } from '../ui/FavoriteButton/FavoriteButton'
-import { LazyImage } from '../ui/LazyImage'
 import heartStyles from '../ui/FavoriteButton/FavoriteButton.module.css'
+import { LazyImage } from '../ui/LazyImage'
 import styles from './ProductCard.module.css'
 
 interface ProductCardProps {
@@ -50,8 +50,8 @@ export function ProductCard({ product }: ProductCardProps) {
 				/>
 				<div style={{ position: 'absolute', top: '8px', right: '8px' }}>
 					<FavoriteButton
-						w='32px'
-						h='32px'
+						w='42px'
+						h='42px'
 						onClick={handleFavoriteClick}
 						style={{
 							borderRadius: '50%',
@@ -62,7 +62,7 @@ export function ProductCard({ product }: ProductCardProps) {
 					>
 						<span className={heartStyles.heartIcon}>
 							<Heart
-								size={14}
+								size={20}
 								fill={isFavorite ? '#ae1ae8' : 'none'}
 								stroke={'#ae1ae8'}
 								strokeWidth='2'
@@ -71,14 +71,14 @@ export function ProductCard({ product }: ProductCardProps) {
 					</FavoriteButton>
 				</div>
 			</div>
-			<div className={styles.card_info} style={{ marginBottom: '5px' }}>
-				<h3 style={{ marginBottom: '5px' }}>{product.name}</h3>
-				<span>{product.price}</span>
+			<div className={styles.card_info}>
+				<h3>{product.name}</h3>
 			</div>
-			<div className={styles.card_buttons}>
+			<span className={styles.card_price}>{product.price}</span>
+			<div className={styles.card_button}>
 				<Link to={`/product/${product.id}`} state={{ product }}>
-					<Button w='36px' h='36px'>
-						<ArrowBigRight size={20} color={'#ffffff'} />
+					<Button w='100%' h='36px'>
+						Посмотреть
 					</Button>
 				</Link>
 			</div>
