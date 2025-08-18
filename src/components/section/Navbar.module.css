@@ -34,3 +34,12 @@
 	transition: color 0.2s ease;
     color: var(--color-text);
 }
+
+.link.active {
+	color: var(--color-accent);
+	font-weight: 600;
+}
+
+.link:hover {
+	color: var(--color-accent);
+}

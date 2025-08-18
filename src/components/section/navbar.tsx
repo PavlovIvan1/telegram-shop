@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom'
 import { Heart, Search as SearchIcon } from 'lucide-react'
 import { BRAND_COLOR } from '../../constants/colors'
+import { isPathActive } from '../../utils/pathUtils'
 import styles from './Navbar.module.css'
 
 export function MobileNavbar() {
@@ -10,9 +11,9 @@ export function MobileNavbar() {
 	const textColor = 'var(--color-text)'
 	const accentColor = 'var(--color-accent)'
 
-	const isFavoritesActive = location.pathname === '/favorites'
-	const isSearchActive =
-		location.pathname === '/' || location.pathname === '/search'
+	// Используем утилитарную функцию для определения активных страниц
+	const isFavoritesActive = isPathActive(location.pathname, ['/favorites'])
+	const isSearchActive = isPathActive(location.pathname, ['/', '/search'])
 
 	return (
 		<nav
@@ -29,7 +30,10 @@ export function MobileNavbar() {
 					style={{ color: isSearchActive ? accentColor : textColor }}
 				>
 					<span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-						<SearchIcon size={18} color={BRAND_COLOR} />
+						<SearchIcon 
+							size={18} 
+							color={isSearchActive ? BRAND_COLOR : textColor} 
+						/>
 						Поиск
 					</span>
 				</Link>
@@ -39,7 +43,10 @@ export function MobileNavbar() {
 					style={{ color: isFavoritesActive ? accentColor : textColor }}
 				>
 					<span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-						<Heart size={18} color={BRAND_COLOR} />
+						<Heart 
+							size={18} 
+							color={isFavoritesActive ? BRAND_COLOR : textColor} 
+						/>
 						Избранное
 					</span>
 				</Link>
