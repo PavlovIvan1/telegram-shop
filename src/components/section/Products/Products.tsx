@@ -12,7 +12,7 @@ export function Products() {
   const [searchParams, setSearchParams] = useSearchParams()
   const [searchValue, setSearchValue] = useState('')
   const [sortOption, setSortOption] = useState('name-asc')
-  const [filterCategory, setFilterCategory] = useState('')
+  // const [filterCategory, setFilterCategory] = useState('')
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -154,10 +154,6 @@ export function Products() {
         product.category?.toLowerCase().includes(search) ||
         product.tags?.some(tag => tag.toLowerCase().includes(search))
       )
-    })
-    .filter(product => {
-      if (!filterCategory) return true
-      return product.category === filterCategory
     })
 
   const parsePrice = (priceStr: string): number => {

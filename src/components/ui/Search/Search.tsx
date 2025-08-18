@@ -11,7 +11,6 @@ interface SearchProps {
 
 export function Search({ value, onChange, onKeyDown }: SearchProps) {
 	const textColor = 'var(--color-text)'
-	const hintColor = 'var(--color-hint)'
 	const accentColor = BRAND_COLOR
 	const secondaryBg = 'var(--color-bg-secondary)'
 
