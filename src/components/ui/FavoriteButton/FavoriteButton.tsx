@@ -24,7 +24,7 @@ export function FavoriteButton({
 	bgColor,
 	style,
 }: ButtonProps) {
-	const background = bgColor || '#ae1ae8'
+	const background = bgColor || '#ffffff'
 
 	return (
 		<button

@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
 import { Heart, Search as SearchIcon } from 'lucide-react'
+import { BRAND_COLOR } from '../../constants/colors'
 import styles from './Navbar.module.css'
 
 export function MobileNavbar() {
@@ -28,7 +29,7 @@ export function MobileNavbar() {
 					style={{ color: isSearchActive ? accentColor : textColor }}
 				>
 					<span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-						<SearchIcon size={18} />
+						<SearchIcon size={18} color={BRAND_COLOR} />
 						Поиск
 					</span>
 				</Link>
@@ -38,7 +39,7 @@ export function MobileNavbar() {
 					style={{ color: isFavoritesActive ? accentColor : textColor }}
 				>
 					<span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-						<Heart size={18} />
+						<Heart size={18} color={BRAND_COLOR} />
 						Избранное
 					</span>
 				</Link>

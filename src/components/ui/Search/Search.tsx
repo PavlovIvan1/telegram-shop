@@ -29,7 +29,7 @@ export function Search({ value, onChange, onKeyDown }: SearchProps) {
 					value={value}
 					onChange={onChange}
 					onKeyDown={onKeyDown}
-					placeholder='Поиск по товарам...'
+					placeholder='Поиск'
 					className={styles.searchInput}
 					style={{
 						color: textColor,

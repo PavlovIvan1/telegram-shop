@@ -1,6 +1,7 @@
 // components/TopBar/TopBar.tsx
 import { ArrowDownUpIcon, Moon, Sun } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { BRAND_COLOR } from '../../../constants/colors'
 import { useTheme } from '../../../theme/ThemeProvider'
 import { Search } from '../../ui/Search/Search'
 import styles from './TopBar.module.css'
@@ -67,7 +68,7 @@ export function TopBar({
 					style={{ backgroundColor: secondaryBg }}
 					aria-label='Сортировка'
 				>
-					<ArrowDownUpIcon size={20} color={textColor} />
+					<ArrowDownUpIcon size={20} color={BRAND_COLOR} />
 				</button>
 
 				{isSortOpen && (
@@ -110,9 +111,9 @@ export function TopBar({
 					aria-label='Переключить тему'
 				>
 					{theme === 'light' ? (
-						<Moon size={20} color={textColor} />
+						<Moon size={20} color={BRAND_COLOR} />
 					) : (
-						<Sun size={20} color={textColor} />
+						<Sun size={20} color={BRAND_COLOR} />
 					)}
 				</button>
 			</div>

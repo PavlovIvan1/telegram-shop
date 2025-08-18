@@ -37,16 +37,40 @@ export function ProductCard({ product }: ProductCardProps) {
 
 	return (
 		<div className={styles.card}>
-			<LazyImage 
-				src={product.image} 
-				alt={product.name}
-				className={styles.cardImage}
-				style={{
-					width: '100%',
-					height: 'auto',
-					borderRadius: '8px',
-				}}
-			/>
+			<div style={{ position: 'relative' }}>
+				<LazyImage 
+					src={product.image} 
+					alt={product.name}
+					className={styles.cardImage}
+					style={{
+						width: '100%',
+						height: 'auto',
+						borderRadius: '8px',
+					}}
+				/>
+				<div style={{ position: 'absolute', top: '8px', right: '8px' }}>
+					<FavoriteButton
+						w='32px'
+						h='32px'
+						onClick={handleFavoriteClick}
+						style={{
+							borderRadius: '50%',
+							display: 'flex',
+							justifyContent: 'center',
+							alignItems: 'center',
+						}}
+					>
+						<span className={heartStyles.heartIcon}>
+							<Heart
+								size={14}
+								fill={isFavorite ? '#ae1ae8' : 'none'}
+								stroke={'#ae1ae8'}
+								strokeWidth='2'
+							/>
+						</span>
+					</FavoriteButton>
+				</div>
+			</div>
 			<div className={styles.card_info} style={{ marginBottom: '5px' }}>
 				<h3 style={{ marginBottom: '5px' }}>{product.name}</h3>
 				<span>{product.price}</span>
@@ -57,29 +81,6 @@ export function ProductCard({ product }: ProductCardProps) {
 						<ArrowBigRight size={20} color={'#ffffff'} />
 					</Button>
 				</Link>
-
-				<FavoriteButton
-					w='36px'
-					h='36px'
-					bgColor={isFavorite ? '#ff3b30' : undefined}
-					onClick={handleFavoriteClick}
-					style={{
-						borderRadius: '50%',
-						display: 'flex',
-						justifyContent: 'center',
-						alignItems: 'center',
-						color: '#fff',
-					}}
-				>
-					<span className={heartStyles.heartIcon}>
-						<Heart
-							size={16}
-							fill='currentColor'
-							stroke={isFavorite ? 'white' : 'none'}
-							strokeWidth='2'
-						/>
-					</span>
-				</FavoriteButton>
 			</div>
 		</div>
 	)
