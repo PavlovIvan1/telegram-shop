@@ -31,13 +31,15 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	transition: color 0.2s ease;
+	transition: color fill 0.3s ease;
     color: var(--color-text);
 }
 
 .link.active {
 	color: var(--color-accent);
 	font-weight: 600;
+	fill: var(--color-accent);
+	transition: fill color 0.3s ease;
 }
 
 .link:hover {
