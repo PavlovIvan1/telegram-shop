@@ -1,5 +1,5 @@
 // components/ProductCard/ProductCard.tsx
-import { Heart } from 'lucide-react'
+import { Heart, Star } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import type { Product } from '../../data/products'
@@ -12,6 +12,21 @@ import styles from './ProductCard.module.css'
 
 interface ProductCardProps {
 	product: Product
+}
+
+function Rating({ rating }: { rating?: number }) {
+	if (rating == null) 	return (
+		<div className={styles.card_rating}>
+			<span className={styles.card_rating_value}>Без рейтинга</span>
+		</div>
+	)
+	const display = Number.isInteger(rating) ? String(rating) : rating.toFixed(1)
+	return (
+		<div className={styles.card_rating}>
+			<Star size={16} stroke="none" fill="#FF8533" className={styles.card_rating_star} />
+			<span className={styles.card_rating_value}>{display}</span>
+		</div>
+	)
 }
 
 export function ProductCard({ product }: ProductCardProps) {
@@ -71,10 +86,11 @@ export function ProductCard({ product }: ProductCardProps) {
 					</FavoriteButton>
 				</div>
 			</div>
+			<span className={styles.card_price}>{product.price}</span>
 			<div className={styles.card_info}>
 				<h3>{product.name}</h3>
+				<Rating rating={product.rating} />
 			</div>
-			<span className={styles.card_price}>{product.price}</span>
 			<div className={styles.card_button}>
 				<Link to={`/product/${product.id}`} state={{ product }}>
 					<Button w='100%' h='36px'>

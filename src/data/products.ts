@@ -18,10 +18,12 @@ export interface Product {
 const products: Product[] = [
 	{
 		id: 'iphone-12-green',
-		name: 'iPhone 12 Green',
+		name: 'iPhone 12 Green - Очень длинное название товара которое не поместится в одну строку',
 		price: '124 000 ₽',
 		image: '/products/iphone-12-green.png',
 		category: 'smartphones',
+		rating: 4.5,
+		reviewsCount: 128,
 	},
 	{
 		id: 'iphone-16-ultramarine',
@@ -29,6 +31,8 @@ const products: Product[] = [
 		price: '150 000 ₽',
 		image: '/products/iphone-12-green.png',
 		category: 'smartphones',
+		rating: 4.8,
+		reviewsCount: 256,
 	},
 	{
 		id: 'airpods-pro',
@@ -36,6 +40,8 @@ const products: Product[] = [
 		price: '25 000 ₽',
 		image: '/products/iphone-12-green.png',
 		category: 'headphones',
+		rating: 4.2,
+		reviewsCount: 89,
 	},
 	{
 		id: 'apple-watch',
@@ -43,6 +49,8 @@ const products: Product[] = [
 		price: '55 000 ₽',
 		image: '/products/iphone-12-green.png',
 		category: 'smartwatches',
+		rating: 4.7,
+		reviewsCount: 156,
 	},
 	{
 		id: 'ipad-air',
@@ -50,6 +58,8 @@ const products: Product[] = [
 		price: '65 000 ₽',
 		image: '/products/iphone-12-green.png',
 		category: 'tablets',
+		rating: 4.3,
+		reviewsCount: 67,
 	},
 ]
 
