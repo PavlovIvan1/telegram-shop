@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 import type { Product } from '../../data/products'
 import { getFavorites, toggleFavorite } from '../../utils/favoritesStorage'
 import { Button } from '../ui/Button/Button'
+import { BRAND_COLOR } from '../../constants/colors'
 import { FavoriteButton } from '../ui/FavoriteButton/FavoriteButton'
 import { LazyImage } from '../ui/LazyImage'
 import heartStyles from '../ui/FavoriteButton/FavoriteButton.module.css'
@@ -54,7 +55,7 @@ export function ProductCard({ product }: ProductCardProps) {
 			<div className={styles.card_buttons}>
 				<Link to={`/product/${product.id}`} state={{ product }}>
 					<Button w='36px' h='36px'>
-						<ArrowBigRight size={20} />
+						<ArrowBigRight size={20} color={'#ffffff'} />
 					</Button>
 				</Link>
 

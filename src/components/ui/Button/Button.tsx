@@ -1,4 +1,5 @@
 import React from 'react'
+import { BRAND_COLOR } from '../../../constants/colors'
 
 interface ButtonProps {
 	children: React.ReactNode
@@ -22,8 +23,7 @@ export function Button(props: ButtonProps) {
 		...rest
 	} = props
 
-	const theme = window.Telegram?.WebApp?.themeParams
-	const buttonColor = theme?.button_color || '#007EE5'
+	const buttonColor = BRAND_COLOR
 
 	return (
 		<button

@@ -2,6 +2,7 @@ import { ArrowLeft } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { BeatLoader } from 'react-spinners'
+import { BRAND_COLOR } from '../constants/colors'
 import type { Product } from '../data/products'
 import { productMap } from '../data/products'
 import { LazyImage } from '../components/ui/LazyImage'
@@ -104,7 +105,7 @@ export function ProductPage() {
 	if (isLoading) {
 		return (
 			<div style={{ padding: '24px', display: 'flex', justifyContent: 'center' }}>
-				<BeatLoader color={window.Telegram?.WebApp?.themeParams?.button_color || '#007EE5'} size={10} />
+				<BeatLoader color={BRAND_COLOR} size={10} />
 			</div>
 		)
 	}
@@ -194,8 +195,8 @@ export function ProductPage() {
 								padding: '10px 14px',
 								borderRadius: 12,
 								textDecoration: 'none',
-								background: (window.Telegram?.WebApp?.themeParams?.button_color || '#007EE5'),
-								color: (window.Telegram?.WebApp?.themeParams?.button_text_color || '#ffffff'),
+								background: BRAND_COLOR,
+								color: '#ffffff',
 								fontWeight: 600,
 								fontSize: 14,
 							}}

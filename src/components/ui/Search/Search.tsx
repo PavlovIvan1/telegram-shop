@@ -1,5 +1,6 @@
 // components/Search/Search.tsx
 import { Search as SearchIcon } from 'lucide-react'
+import { BRAND_COLOR } from '../../../constants/colors'
 import styles from './Search.module.css'
 
 interface SearchProps {
@@ -9,11 +10,10 @@ interface SearchProps {
 }
 
 export function Search({ value, onChange, onKeyDown }: SearchProps) {
-	const theme = window.Telegram?.WebApp?.themeParams
-	const textColor = theme?.text_color || '#000000'
-	const hintColor = theme?.hint_color || '#999999'
-	const accentColor = theme?.accent_text_color || '#007EE5'
-	const secondaryBg = theme?.secondary_bg_color || '#f4f4f5'
+	const textColor = 'var(--color-text)'
+	const hintColor = 'var(--color-hint)'
+	const accentColor = BRAND_COLOR
+	const secondaryBg = 'var(--color-bg-secondary)'
 
 	return (
 		<div className={styles.searchContainer}>
@@ -24,7 +24,7 @@ export function Search({ value, onChange, onKeyDown }: SearchProps) {
 					borderRadius: 12,
 				}}
 			>
-				<SearchIcon size={18} color={hintColor} className={styles.searchIcon} />
+				<SearchIcon size={18} color={BRAND_COLOR} className={styles.searchIcon} />
 				<input
 					type='text'
 					value={value}

@@ -24,9 +24,7 @@ export function FavoriteButton({
 	bgColor,
 	style,
 }: ButtonProps) {
-	const theme = window.Telegram?.WebApp?.themeParams
-	const telegramButtonColor = theme?.button_color || '#007EE5'
-	const background = bgColor || telegramButtonColor
+	const background = bgColor || '#ae1ae8'
 
 	return (
 		<button

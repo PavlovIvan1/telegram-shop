@@ -1,14 +1,13 @@
 import { Link, useLocation } from 'react-router-dom'
+import { Heart, Search as SearchIcon } from 'lucide-react'
 import styles from './Navbar.module.css'
 
 export function MobileNavbar() {
 	const location = useLocation()
 
-	// Получаем цвета из Telegram WebApp
-	const theme = window.Telegram?.WebApp?.themeParams
-	const backgroundColor = theme?.bg_color || '#ffffff'
-	const textColor = theme?.text_color || '#000000'
-	const accentColor = theme?.accent_text_color || '#007EE5'
+	const backgroundColor = 'var(--color-bg)'
+	const textColor = 'var(--color-text)'
+	const accentColor = 'var(--color-accent)'
 
 	const isFavoritesActive = location.pathname === '/favorites'
 	const isSearchActive =
@@ -19,7 +18,7 @@ export function MobileNavbar() {
 			className={styles.navbar}
 			style={{
 				backgroundColor,
-				borderColor: theme?.secondary_bg_color || '#e0e0e0',
+				borderColor: 'var(--color-border)',
 			}}
 		>
 			<div className={styles.container}>
@@ -28,14 +27,20 @@ export function MobileNavbar() {
 					className={`${styles.link} ${isSearchActive ? styles.active : ''}`}
 					style={{ color: isSearchActive ? accentColor : textColor }}
 				>
-					🔍 Поиск
+					<span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+						<SearchIcon size={18} />
+						Поиск
+					</span>
 				</Link>
 				<Link
                     to={{ pathname: '/favorites', search: window.location.search }}
 					className={`${styles.link} ${isFavoritesActive ? styles.active : ''}`}
 					style={{ color: isFavoritesActive ? accentColor : textColor }}
 				>
-					❤️ Избранное
+					<span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+						<Heart size={18} />
+						Избранное
+					</span>
 				</Link>
 			</div>
 		</nav>

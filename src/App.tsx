@@ -8,11 +8,7 @@ import { ProductPage } from './pages/ProductPage'
 
 export function App() {
 	useEffect(() => {
-		// 🚀 Убедимся, что Telegram WebApp готов к навигации
-		if (window.Telegram?.WebApp) {
-			window.Telegram.WebApp.ready()
-			console.log('Telegram WebApp.ready() вызван')
-		}
+		// Инициализация приложения
 	}, [])
 
 	return (

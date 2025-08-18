@@ -1,6 +1,7 @@
 // components/TopBar/TopBar.tsx
-import { ArrowDownUpIcon, Filter } from 'lucide-react'
+import { ArrowDownUpIcon, Moon, Sun } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { useTheme } from '../../../theme/ThemeProvider'
 import { Search } from '../../ui/Search/Search'
 import styles from './TopBar.module.css'
 
@@ -9,8 +10,6 @@ interface TopBarProps {
 	onSearchChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 	sortOption: string
 	onSortChange: (value: string) => void
-	filterCategory: string
-	onFilterChange: (value: string) => void
 	onSearchKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void
 }
 
@@ -19,24 +18,20 @@ export function TopBar({
 	onSearchChange,
 	sortOption,
 	onSortChange,
-	filterCategory,
-	onFilterChange,
 	onSearchKeyDown,
 }: TopBarProps) {
 	const [isSortOpen, setIsSortOpen] = useState(false)
-	const [isFilterOpen, setIsFilterOpen] = useState(false)
+	const { theme, toggleTheme } = useTheme()
 
-	const theme = window.Telegram?.WebApp?.themeParams
-	const textColor = theme?.text_color || '#000000'
-	const hintColor = theme?.hint_color || '#999999'
-	const secondaryBg = theme?.secondary_bg_color || '#f4f4f5'
-	const buttonColor = theme?.button_color || '#007EE5'
+	const textColor = 'var(--color-text)'
+	const hintColor = 'var(--color-hint)'
+	const secondaryBg = 'var(--color-bg-secondary)'
+	const buttonColor = 'var(--color-accent)'
 
 	// Закрытие при клике мимо
 	useEffect(() => {
 		const handleClickOutside = () => {
 			setIsSortOpen(false)
-			setIsFilterOpen(false)
 		}
 		document.addEventListener('click', handleClickOutside)
 		return () => document.removeEventListener('click', handleClickOutside)
@@ -45,25 +40,12 @@ export function TopBar({
 	const toggleSort = (e: React.MouseEvent) => {
 		e.stopPropagation()
 		setIsSortOpen(prev => !prev)
-		setIsFilterOpen(false)
 		window.Telegram?.WebApp?.HapticFeedback?.impactOccurred('light')
-	}
-
-	const toggleFilter = (e: React.MouseEvent) => {
-		e.stopPropagation()
-		setIsFilterOpen(prev => !prev)
-		setIsSortOpen(false)
-		window.Telegram?.WebApp?.HapticFeedback?.impactOccurred('medium')
 	}
 
 	const handleSortSelect = (value: string) => {
 		onSortChange(value)
 		setIsSortOpen(false)
-	}
-
-	const handleFilterSelect = (value: string) => {
-		onFilterChange(value)
-		setIsFilterOpen(false)
 	}
 
 	return (
@@ -118,47 +100,21 @@ export function TopBar({
 				)}
 			</div>
 
-			{/* Кнопка фильтров + dropdown */}
+
+			{/* Кнопка переключения темы */}
 			<div className={styles.dropdown} style={{ position: 'relative' }}>
 				<button
-					onClick={toggleFilter}
+					onClick={toggleTheme}
 					className={styles.iconButton}
 					style={{ backgroundColor: secondaryBg }}
-					aria-label='Фильтры'
+					aria-label='Переключить тему'
 				>
-					<Filter size={20} color={textColor} />
+					{theme === 'light' ? (
+						<Moon size={20} color={textColor} />
+					) : (
+						<Sun size={20} color={textColor} />
+					)}
 				</button>
-
-				{isFilterOpen && (
-					<div
-						className={styles.dropdownMenu}
-						style={{
-							backgroundColor: secondaryBg,
-							borderColor: hintColor,
-							boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
-						}}
-					>
-						{[
-							{ value: '', label: 'Все категории' },
-							{ value: 'smartphones', label: 'Смартфоны' },
-							{ value: 'headphones', label: 'Наушники' },
-							{ value: 'smartwatches', label: 'Часы' },
-							{ value: 'tablets', label: 'Планшеты' },
-						].map(option => (
-							<div
-								key={option.value}
-								className={styles.dropdownItem}
-								style={{
-									color:
-										filterCategory === option.value ? buttonColor : textColor,
-								}}
-								onClick={() => handleFilterSelect(option.value)}
-							>
-								{option.label}
-							</div>
-						))}
-					</div>
-				)}
 			</div>
 		</div>
 	)

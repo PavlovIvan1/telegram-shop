@@ -306,6 +306,7 @@ import type { Product } from '../data/products'
 import { getProductById } from '../data/products'
 import { getFavorites, removeFavorite } from '../utils/favoritesStorage'
 import styles from './Favorites.module.css'
+import { BRAND_COLOR } from '../constants/colors'
 
 export function Favorites() {
 	const [favoriteProducts, setFavoriteProducts] = useState<Product[]>([])
@@ -360,7 +361,7 @@ export function Favorites() {
   if (loading) {
     return (
       <div style={{ padding: '24px', display: 'flex', justifyContent: 'center' }}>
-        <BeatLoader color={window.Telegram?.WebApp?.themeParams?.button_color || '#007EE5'} size={10} />
+        <BeatLoader color={BRAND_COLOR} size={10} />
       </div>
     )
   }
@@ -427,7 +428,7 @@ export function Favorites() {
 						<h3 style={{ margin: '8px 0 4px', fontSize: '15px' }}>
 							{product.name}
 						</h3>
-						<span style={{ color: '#007EE5', fontWeight: 500 }}>
+						<span style={{ color: '#ae1ae8', fontWeight: 500 }}>
 							{product.price}
 						</span>
 					</div>
