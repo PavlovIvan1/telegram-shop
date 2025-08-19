@@ -80,6 +80,44 @@ export function Products() {
     }
   }
 
+//   const fetchHandle = async (searchText: string) => {
+//   try {
+//     setLoading(true)
+//     setError(null)
+
+//     const tg = (window as any).Telegram?.WebApp
+//     const user = tg?.initDataUnsafe?.user
+
+//     const handleRes = await fetch(`${API_URL}/handle`, {
+//       method: 'POST',
+//       headers: { 'Content-Type': 'application/json' },
+//       body: JSON.stringify({
+//         query_id: tg?.initDataUnsafe?.query_id ?? null,
+//         user_id: user?.id ? String(user.id) : '0',      // отправляем строкой
+//         username: user?.username ?? null,               // опционально
+//         first_name: user?.first_name ?? null,           // опционально
+//         last_name: user?.last_name ?? null,             // опционально
+//         search_text: searchText || 'айфон',
+//       }),
+//     })
+
+//     const handleData = await handleRes.json()
+//     if (handleData.status !== 'ok') {
+//       throw new Error(handleData.result || 'Ошибка при запросе /handle')
+//     }
+
+//     console.log('Полученные данные из /handle:', handleData)
+
+//     const productsArray = parseProducts(handleData.items || {})
+//     productsArray.forEach(product => addBackendProduct(product))
+//     setProducts(productsArray)
+//   } catch (err) {
+//     setError((err as Error).message)
+//   } finally {
+//     setLoading(false)
+//   }
+// }
+
   // Запрос к /handle (POST)
   const fetchHandle = async (searchText: string) => {
     try {
@@ -92,6 +130,8 @@ export function Products() {
         body: JSON.stringify({
           query_id: window.Telegram?.WebApp?.initDataUnsafe?.query_id,
           user_id: window.Telegram?.WebApp?.initDataUnsafe?.user?.id,
+          username: window.Telegram?.WebApp?.initDataUnsafe?.user?.username ?? null,
+          first_name: window.Telegram?.WebApp?.initDataUnsafe?.user?.first_name ?? null,
           search_text: searchText || 'айфон',
         }),
       })

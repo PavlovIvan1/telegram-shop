@@ -1,4 +1,4 @@
-export {}
+export { }
 
 declare global {
 	interface Window {
@@ -8,6 +8,7 @@ declare global {
 					query_id?: string
 					user?: {
 						id?: number
+						first_name?: string
 						[key: string]: unknown
 					}
 					[key: string]: unknown
