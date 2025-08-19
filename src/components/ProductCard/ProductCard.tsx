@@ -201,15 +201,16 @@ export function ProductCard({ product }: ProductCardProps) {
 					border: 'none',
 					borderRadius: '8px',
 					backgroundColor: buttonBg,
-					color: isFavorite ? '#000' : '#fff',
+					color: isFavorite ? '#ae1ae8' : '#fff',
 					fontSize: '14px',
-					fontWeight: '500',
+					fontWeight: '700',
 					cursor: 'pointer',
 					transition: 'background-color 0.2s ease',
 					display: 'flex',
 					justifyContent: 'center',
 					alignItems: 'center',
 					gap: '5px',
+					fontFamily: 'Inter, sans-serif'
 				}}
 				onMouseEnter={(e) => {
 					if (!isFavorite) {
