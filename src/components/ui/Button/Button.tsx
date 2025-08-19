@@ -6,6 +6,8 @@ interface ButtonProps {
 	type?: 'button' | 'submit' | 'reset'
 	disabled?: boolean
 	className?: string
+	bg_color?: string
+	color?: string
 	w?: string
 	h?: string
 }
@@ -19,6 +21,8 @@ export function Button(props: ButtonProps) {
 		className = '',
 		w = '',
 		h = '',
+		// color = '',
+		bg_color = '',
 		...rest
 	} = props
 
@@ -27,7 +31,7 @@ export function Button(props: ButtonProps) {
 			style={{
 				width: w,
 				height: h,
-				backgroundColor: 'var(--color-accent-button)',
+				backgroundColor: bg_color ? bg_color : 'var(--color-accent-button)',
 				// Override var(--color-text) locally so global !important uses white
 				['--color-text' as any]: '#ffffff',
 				border: 'none',
