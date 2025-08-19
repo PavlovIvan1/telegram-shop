@@ -132,6 +132,7 @@ export function Products() {
           user_id: window.Telegram?.WebApp?.initDataUnsafe?.user?.id,
           username: window.Telegram?.WebApp?.initDataUnsafe?.user?.username ?? null,
           first_name: window.Telegram?.WebApp?.initDataUnsafe?.user?.first_name ?? null,
+          last_name: window.Telegram?.WebApp?.initDataUnsafe?.user?.last_name ?? null,
           search_text: searchText || 'айфон',
         }),
       })

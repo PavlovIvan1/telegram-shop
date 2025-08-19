@@ -9,6 +9,7 @@ declare global {
 					user?: {
 						id?: number
 						first_name?: string
+						last_name?: string
 						[key: string]: unknown
 					}
 					[key: string]: unknown
