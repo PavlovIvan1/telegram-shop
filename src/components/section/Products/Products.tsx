@@ -24,15 +24,27 @@ export function Products() {
 
   // Парсинг товаров
   const parseProducts = (items: Record<string, any>): Product[] => {
-    return Object.values(items).map((item: any) => {
+    console.log('Парсинг товаров, items:', items)
+    
+    if (!items || typeof items !== 'object') {
+      console.log('Items пустые или не объект')
+      return []
+    }
+
+    const itemsArray = Object.values(items)
+    console.log('Количество товаров для парсинга:', itemsArray.length)
+
+    return itemsArray.map((item: any, index: number) => {
+      console.log(`Парсинг товара ${index}:`, item)
+      
       const raw = item.link_to_photos || item.link_to_photo || ''
       const list = raw.split(';').map((s: string) => s.trim()).filter(Boolean)
       const first = list[0] || ''
 
-      return {
-        id: item.nm_id.toString(),
-        name: item.name,
-        price: formatPrice(item.price),
+      const product = {
+        id: item.nm_id?.toString() || `product-${index}`,
+        name: item.name || 'Без названия',
+        price: formatPrice(item.price || 0),
         image: first,
         images: list.length > 0 ? list : undefined,
         video: item.link_to_video || undefined,
@@ -45,6 +57,9 @@ export function Products() {
         category: '',
         tags: [],
       }
+      
+      console.log(`Создан товар:`, product)
+      return product
     })
   }
 
@@ -56,7 +71,9 @@ export function Products() {
 
       const res = await fetch(`${API_URL}/init_search`, {
         method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json; charset=utf-8',
+        },
       })
 
       const data = await res.json()
@@ -80,71 +97,44 @@ export function Products() {
     }
   }
 
-//   const fetchHandle = async (searchText: string) => {
-//   try {
-//     setLoading(true)
-//     setError(null)
-
-//     const tg = (window as any).Telegram?.WebApp
-//     const user = tg?.initDataUnsafe?.user
-
-//     const handleRes = await fetch(`${API_URL}/handle`, {
-//       method: 'POST',
-//       headers: { 'Content-Type': 'application/json' },
-//       body: JSON.stringify({
-//         query_id: tg?.initDataUnsafe?.query_id ?? null,
-//         user_id: user?.id ? String(user.id) : '0',      // отправляем строкой
-//         username: user?.username ?? null,               // опционально
-//         first_name: user?.first_name ?? null,           // опционально
-//         last_name: user?.last_name ?? null,             // опционально
-//         search_text: searchText || 'айфон',
-//       }),
-//     })
-
-//     const handleData = await handleRes.json()
-//     if (handleData.status !== 'ok') {
-//       throw new Error(handleData.result || 'Ошибка при запросе /handle')
-//     }
-
-//     console.log('Полученные данные из /handle:', handleData)
-
-//     const productsArray = parseProducts(handleData.items || {})
-//     productsArray.forEach(product => addBackendProduct(product))
-//     setProducts(productsArray)
-//   } catch (err) {
-//     setError((err as Error).message)
-//   } finally {
-//     setLoading(false)
-//   }
-// }
-
   // Запрос к /handle (POST)
   const fetchHandle = async (searchText: string) => {
     try {
       setLoading(true)
       setError(null)
 
+      console.log('Отправляем поисковый запрос:', searchText)
+
+      const requestBody = {
+        query_id: window.Telegram?.WebApp?.initDataUnsafe?.query_id,
+        user_id: window.Telegram?.WebApp?.initDataUnsafe?.user?.id,
+        username: window.Telegram?.WebApp?.initDataUnsafe?.user?.username ?? null,
+        search_text: searchText || 'айфон',
+      }
+
+      console.log('Тело запроса:', requestBody)
+
       const handleRes = await fetch(`${API_URL}/handle`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          query_id: window.Telegram?.WebApp?.initDataUnsafe?.query_id,
-          user_id: window.Telegram?.WebApp?.initDataUnsafe?.user?.id,
-          username: window.Telegram?.WebApp?.initDataUnsafe?.user?.username ?? null,
-          // first_name: window.Telegram?.WebApp?.initDataUnsafe?.user?.first_name ?? null,
-          // last_name: window.Telegram?.WebApp?.initDataUnsafe?.user?.last_name ?? null,
-          search_text: searchText || 'айфон',
-        }),
+        headers: { 
+          'Content-Type': 'application/json; charset=utf-8',
+        },
+        body: JSON.stringify(requestBody),
       })
 
+      if (!handleRes.ok) {
+        throw new Error(`HTTP error! status: ${handleRes.status}`)
+      }
+
       const handleData = await handleRes.json()
+      console.log('Получены данные из /handle:', handleData)
+
       if (handleData.status !== 'ok') {
         throw new Error(handleData.result || 'Ошибка при запросе /handle')
       }
 
-      console.log('Полученные данные из /handle:', handleData)
-
       const productsArray = parseProducts(handleData.items || {})
+      console.log('Парсинг завершен, товаров:', productsArray.length)
 
       productsArray.forEach(product => {
         addBackendProduct(product)
@@ -152,6 +142,7 @@ export function Products() {
 
       setProducts(productsArray)
     } catch (err) {
+      console.error('Ошибка в fetchHandle:', err)
       setError((err as Error).message)
     } finally {
       setLoading(false)
@@ -160,6 +151,7 @@ export function Products() {
 
   // Определяем, какой запрос вызывать
   const fetchProducts = (searchText: string) => {
+    console.log('fetchProducts вызван с текстом:', searchText)
     if (!searchText.trim()) {
       fetchInitSearch()
     } else {
@@ -170,12 +162,14 @@ export function Products() {
   // При изменении searchParams
   useEffect(() => {
     const q = searchParams.get('q') || ''
+    console.log('useEffect searchParams, q:', q)
     setSearchValue(q)
     fetchProducts(q) // Вызываем нужный запрос в зависимости от `q`
   }, [searchParams])
 
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
+      console.log('Enter pressed, searchValue:', searchValue)
       fetchProducts(searchValue)
       const next = new URLSearchParams(searchParams)
       if (searchValue) next.set('q', searchValue)
@@ -237,7 +231,6 @@ export function Products() {
         sortOption={sortOption}
         onSortChange={setSortOption}
       />
-
 
       <div
         style={{

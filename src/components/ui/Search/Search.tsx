@@ -37,6 +37,12 @@ export function Search({ value, onChange, onKeyDown }: SearchProps) {
 						backgroundColor: 'transparent',
 						fontSize: 16,
 					}}
+					// Добавляем атрибуты для правильной обработки русских символов
+					lang="ru"
+					spellCheck="false"
+					autoComplete="off"
+					autoCorrect="off"
+					autoCapitalize="off"
 				/>
 			</div>
 		</div>
