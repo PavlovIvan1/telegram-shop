@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { BeatLoader } from 'react-spinners'
 import { BRAND_COLOR } from '../../../constants/colors'
@@ -12,10 +12,10 @@ export function Products() {
   const [searchParams, setSearchParams] = useSearchParams()
   const [searchValue, setSearchValue] = useState('')
   const [sortOption, setSortOption] = useState('name-asc')
-  // const [filterCategory, setFilterCategory] = useState('')
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [debounceTimer, setDebounceTimer] = useState<number | null>(null)
 
   // Форматируем цену
   const formatPrice = (priceNumber: number): string => {
@@ -150,14 +150,29 @@ export function Products() {
   }
 
   // Определяем, какой запрос вызывать
-  const fetchProducts = (searchText: string) => {
+  const fetchProducts = useCallback((searchText: string) => {
     console.log('fetchProducts вызван с текстом:', searchText)
     if (!searchText.trim()) {
       fetchInitSearch()
     } else {
       fetchHandle(searchText)
     }
-  }
+  }, [])
+
+  // Debounced функция для поиска
+  const debouncedSearch = useCallback((searchText: string) => {
+    // Очищаем предыдущий таймер
+    if (debounceTimer) {
+      clearTimeout(debounceTimer)
+    }
+
+    // Устанавливаем новый таймер
+    const timer = setTimeout(() => {
+      fetchProducts(searchText)
+    }, 500) // 500ms задержка
+
+    setDebounceTimer(timer)
+  }, [debounceTimer, fetchProducts])
 
   // При изменении searchParams
   useEffect(() => {
@@ -165,11 +180,24 @@ export function Products() {
     console.log('useEffect searchParams, q:', q)
     setSearchValue(q)
     fetchProducts(q) // Вызываем нужный запрос в зависимости от `q`
-  }, [searchParams])
+  }, [searchParams, fetchProducts])
+
+  // Очистка таймера при размонтировании
+  useEffect(() => {
+    return () => {
+      if (debounceTimer) {
+        clearTimeout(debounceTimer)
+      }
+    }
+  }, [debounceTimer])
 
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       console.log('Enter pressed, searchValue:', searchValue)
+      // Очищаем таймер при нажатии Enter
+      if (debounceTimer) {
+        clearTimeout(debounceTimer)
+      }
       fetchProducts(searchValue)
       const next = new URLSearchParams(searchParams)
       if (searchValue) next.set('q', searchValue)
@@ -178,24 +206,19 @@ export function Products() {
     }
   }
 
-  const filteredProducts = products
-    .filter(product => {
-      const search = searchValue.toLowerCase().trim()
-      if (!search) return true
-
-      return (
-        product.name.toLowerCase().includes(search) ||
-        product.price.toLowerCase().includes(search) ||
-        product.category?.toLowerCase().includes(search) ||
-        product.tags?.some(tag => tag.toLowerCase().includes(search))
-      )
-    })
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setSearchValue(value)
+    
+    // Используем debounced поиск для автоматического поиска
+    debouncedSearch(value)
+  }
 
   const parsePrice = (priceStr: string): number => {
     return Number(priceStr.replace(/[^\d]/g, ''))
   }
 
-  const sortedProducts = [...filteredProducts].sort((a, b) => {
+  const sortedProducts = [...products].sort((a, b) => {
     switch (sortOption) {
       case 'name-asc':
         return a.name.localeCompare(b.name)
@@ -226,7 +249,7 @@ export function Products() {
     <div>
       <TopBar
         searchValue={searchValue}
-        onSearchChange={e => setSearchValue(e.target.value)}
+        onSearchChange={handleSearchChange}
         onSearchKeyDown={handleSearchKeyDown}
         sortOption={sortOption}
         onSortChange={setSortOption}
