@@ -15,7 +15,6 @@ export function Products() {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [debounceTimer, setDebounceTimer] = useState<number | null>(null)
 
   // Форматируем цену
   const formatPrice = (priceNumber: number): string => {
@@ -159,21 +158,6 @@ export function Products() {
     }
   }, [])
 
-  // Debounced функция для поиска
-  const debouncedSearch = useCallback((searchText: string) => {
-    // Очищаем предыдущий таймер
-    if (debounceTimer) {
-      clearTimeout(debounceTimer)
-    }
-
-    // Устанавливаем новый таймер
-    const timer = setTimeout(() => {
-      fetchProducts(searchText)
-    }, 500) // 500ms задержка
-
-    setDebounceTimer(timer)
-  }, [debounceTimer, fetchProducts])
-
   // При изменении searchParams
   useEffect(() => {
     const q = searchParams.get('q') || ''
@@ -182,22 +166,9 @@ export function Products() {
     fetchProducts(q) // Вызываем нужный запрос в зависимости от `q`
   }, [searchParams, fetchProducts])
 
-  // Очистка таймера при размонтировании
-  useEffect(() => {
-    return () => {
-      if (debounceTimer) {
-        clearTimeout(debounceTimer)
-      }
-    }
-  }, [debounceTimer])
-
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       console.log('Enter pressed, searchValue:', searchValue)
-      // Очищаем таймер при нажатии Enter
-      if (debounceTimer) {
-        clearTimeout(debounceTimer)
-      }
       fetchProducts(searchValue)
       const next = new URLSearchParams(searchParams)
       if (searchValue) next.set('q', searchValue)
@@ -209,9 +180,7 @@ export function Products() {
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
     setSearchValue(value)
-    
-    // Используем debounced поиск для автоматического поиска
-    debouncedSearch(value)
+    // Убираем автоматический поиск - только по Enter
   }
 
   const parsePrice = (priceStr: string): number => {
