@@ -36,69 +36,25 @@ export function ProductPage() {
 
 	// Lazy-load HLS only when needed and cleanup on unmount
 	useEffect(() => {
-		if (!product || !product.video || !videoRef.current) return
-
-		const videoEl = videoRef.current
-		const videoUrl = product.video as string
-		const isM3U8 = /\.m3u8($|\?)/i.test(videoUrl)
-		let hls: any | null = null
-
-		function attachSource() {
-			// Safari iOS supports HLS natively
-			if (isM3U8 && (videoEl as any).canPlayType && videoEl.canPlayType('application/vnd.apple.mpegurl')) {
-				videoEl.src = videoUrl
-				return
-			}
-
-			if (!isM3U8) {
-				videoEl.src = videoUrl
-				return
-			}
-
-			function loadScriptOnce(src: string): Promise<void> {
-				return new Promise(resolve => {
-					if (document.querySelector(`script[data-hlsjs="true"]`)) return resolve()
-					const s = document.createElement('script')
-					s.src = src
-					s.async = true
-					s.setAttribute('data-hlsjs', 'true')
-					s.onload = () => resolve()
-					s.onerror = () => resolve()
-					document.head.appendChild(s)
-				})
-			}
-
-			loadScriptOnce('https://cdn.jsdelivr.net/npm/hls.js@latest').then(() => {
-				const Hls = (window as any).Hls
-				if (!Hls || !Hls.isSupported()) {
-					// Fallback: set src directly
-					videoEl.src = videoUrl
-					return
+		if (product?.video && videoRef.current) {
+			try {
+				// Для HLS видео
+				if (product.video.includes('.m3u8')) {
+					// Здесь можно добавить HLS.js если нужно
+					videoRef.current.src = product.video
+				} else {
+					// Обычное видео
+					videoRef.current.src = product.video
 				}
-				hls = new Hls({
-					autoStartLoad: false, // старт загрузки только по действию пользователя (play)
-				})
-				hls.loadSource(videoUrl)
-				hls.attachMedia(videoEl)
-				// начинаем грузить только когда пользователь нажмёт play
-				const onPlay = () => {
-					try { hls && hls.startLoad() } catch {}
-					videoEl.removeEventListener('play', onPlay)
-				}
-				videoEl.addEventListener('play', onPlay)
-			})
+			} catch (error) {
+				console.error('Error loading video:', error)
+			}
 		}
 
-		attachSource()
-
 		return () => {
-			try { videoEl.pause() } catch {}
-			try {
-				// очищаем src
-				videoEl.removeAttribute('src')
-				videoEl.load()
-			} catch {}
-			try { hls && hls.destroy && hls.destroy() } catch {}
+			if (videoRef.current) {
+				videoRef.current.src = ''
+			}
 		}
 	}, [product])
 
@@ -184,6 +140,44 @@ export function ProductPage() {
 			<div className={styles.info}>
 				<h2 className={styles.productName}>{product.name}</h2>
 				<div className={styles.price}>{product.price}</div>
+				
+				{/* Позиции и остатки */}
+				<div style={{ margin: '12px 0', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+					{product.organicPosition && (
+						<div style={{ 
+							padding: '4px 8px', 
+							background: '#f0f0f0', 
+							borderRadius: '6px', 
+							fontSize: '12px',
+							color: '#666'
+						}}>
+							Органическая позиция: {product.organicPosition}
+						</div>
+					)}
+					{product.promoPosition && (
+						<div style={{ 
+							padding: '4px 8px', 
+							background: '#fff3cd', 
+							borderRadius: '6px', 
+							fontSize: '12px',
+							color: '#856404'
+						}}>
+							Промо позиция: {product.promoPosition}
+						</div>
+					)}
+					{product.remains && (
+						<div style={{ 
+							padding: '4px 8px', 
+							background: '#d4edda', 
+							borderRadius: '6px', 
+							fontSize: '12px',
+							color: '#155724'
+						}}>
+							Остаток: {product.remains} шт
+						</div>
+					)}
+				</div>
+
 				{product.link && (
 					<div style={{ margin: '8px 0 16px' }}>
 						<a
@@ -215,18 +209,69 @@ export function ProductPage() {
 
 			<div className={styles.reviews}>
 				<h3>Отзывы {product.reviewsCount ? `(${product.reviewsCount})` : ''}</h3>
-				{(product.rating || product.lastFeedbackText) ? (
+				
+				{/* Рейтинг товара */}
+				{product.rating && (
+					<div style={{ marginBottom: '16px' }}>
+						<div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+							<span style={{ fontSize: '16px', fontWeight: '600' }}>Общий рейтинг:</span>
+							<span style={{ fontSize: '18px' }}>{'⭐'.repeat(Math.round(product.rating))}</span>
+							<span style={{ fontSize: '16px', fontWeight: '600' }}>{product.rating}</span>
+						</div>
+					</div>
+				)}
+
+				{/* Последние отзывы */}
+				{product.lastFeedbacks ? (
+					Object.entries(product.lastFeedbacks).map(([key, feedback]) => {
+						if (!feedback || (!feedback.text && !feedback.pros && !feedback.cons)) {
+							return null
+						}
+
+						const rating = product.lastFeedbacksRating?.[`rate_${key.split('_')[1]}` as keyof typeof product.lastFeedbacksRating]
+						
+						return (
+							<div key={key} className={styles.review} style={{ marginBottom: '16px' }}>
+								<div className={styles.reviewHeader}>
+									<strong>Отзыв {key.split('_')[1]}</strong>
+									{rating && (
+										<span style={{ fontSize: '14px' }}>
+											{'⭐'.repeat(rating)} {rating}/5
+										</span>
+									)}
+								</div>
+								
+								{feedback.text && (
+									<div style={{ marginBottom: '8px' }}>
+										<p className={styles.reviewText}>{feedback.text}</p>
+									</div>
+								)}
+								
+								{feedback.pros && (
+									<div style={{ marginBottom: '8px' }}>
+										<strong style={{ color: '#28a745' }}>Плюсы:</strong>
+										<p className={styles.reviewText}>{feedback.pros}</p>
+									</div>
+								)}
+								
+								{feedback.cons && (
+									<div style={{ marginBottom: '8px' }}>
+										<strong style={{ color: '#dc3545' }}>Минусы:</strong>
+										<p className={styles.reviewText}>{feedback.cons}</p>
+									</div>
+								)}
+							</div>
+						)
+					})
+				) : product.lastFeedbackText ? (
 					<div className={styles.review}>
 						<div className={styles.reviewHeader}>
-							<strong>Оценка</strong>
-							{product.rating && <span>{'⭐'.repeat(Math.round(product.rating))} {product.rating}</span>}
+							<strong>Последний отзыв</strong>
 							{product.lastFeedbackRecentRating && (
-								<small>Последняя: {'⭐'.repeat(product.lastFeedbackRecentRating)}</small>
+								<span>{'⭐'.repeat(product.lastFeedbackRecentRating)} {product.lastFeedbackRecentRating}/5</span>
 							)}
 						</div>
-						{product.lastFeedbackText && (
-							<p className={styles.reviewText}>{product.lastFeedbackText}</p>
-						)}
+						<p className={styles.reviewText}>{product.lastFeedbackText}</p>
 					</div>
 				) : (
 					<div className={styles.review}>

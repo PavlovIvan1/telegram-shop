@@ -13,6 +13,26 @@ export interface Product {
   lastFeedbackRecentRating?: number
 	category?: string
 	tags?: string[]
+	// Новые поля
+	organicPosition?: number
+	promoPosition?: number
+	remains?: number
+	numberOfImages?: number
+	// Новые поля для отзывов
+	lastFeedbacks?: {
+		feedback_1?: { cons: string; text: string; pros: string }
+		feedback_2?: { cons: string; text: string; pros: string }
+		feedback_3?: { cons: string; text: string; pros: string }
+		feedback_4?: { cons: string; text: string; pros: string }
+		feedback_5?: { cons: string; text: string; pros: string }
+	}
+	lastFeedbacksRating?: {
+		rate_1?: number
+		rate_2?: number
+		rate_3?: number
+		rate_4?: number
+		rate_5?: number
+	}
 }
 
 const products: Product[] = [

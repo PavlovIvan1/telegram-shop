@@ -55,6 +55,14 @@ export function Products() {
         lastFeedbackRecentRating: item.rate_of_last_feedback || undefined,
         category: '',
         tags: [],
+        // Новые поля
+        organicPosition: item.organic_position || undefined,
+        promoPosition: item.promo_position || undefined,
+        remains: item.remains || undefined,
+        numberOfImages: item.number_of_images || undefined,
+        // Новые поля для отзывов
+        lastFeedbacks: item.text_of_last_feedbacks || undefined,
+        lastFeedbacksRating: item.rate_of_last_feedbacks || undefined,
       }
       
       console.log(`Создан товар:`, product)
