@@ -83,12 +83,23 @@ export function Products() {
         },
       })
 
-      const data = await res.json()
-      if (data.status !== 'ok') {
-        throw new Error(data.result || 'Ошибка при запросе /init_search')
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`)
       }
 
+      const data = await res.json()
       console.log('Получены данные из /init_search:', data)
+
+      if (data.status !== 'ok') {
+        throw new Error(data.result || data.detail || 'Ошибка при запросе /init_search')
+      }
+
+      // Дополнительная проверка на None/null
+      if (!data.items || data.items === null || data.items === undefined) {
+        console.log('Items пустые или null, устанавливаем пустой массив')
+        setProducts([])
+        return
+      }
 
       const productsArray = parseProducts(data.items || {})
 
@@ -98,7 +109,10 @@ export function Products() {
 
       setProducts(productsArray)
     } catch (err) {
+      console.error('Ошибка в fetchInitSearch:', err)
       setError((err as Error).message)
+      // При ошибке устанавливаем пустой массив товаров
+      setProducts([])
     } finally {
       setLoading(false)
     }
@@ -137,7 +151,14 @@ export function Products() {
       console.log('Получены данные из /handle:', handleData)
 
       if (handleData.status !== 'ok') {
-        throw new Error(handleData.result || 'Ошибка при запросе /handle')
+        throw new Error(handleData.result || handleData.detail || 'Ошибка при запросе /handle')
+      }
+
+      // Дополнительная проверка на None/null
+      if (!handleData.items || handleData.items === null || handleData.items === undefined) {
+        console.log('Items пустые или null, устанавливаем пустой массив')
+        setProducts([])
+        return
       }
 
       const productsArray = parseProducts(handleData.items || {})
@@ -151,6 +172,8 @@ export function Products() {
     } catch (err) {
       console.error('Ошибка в fetchHandle:', err)
       setError((err as Error).message)
+      // При ошибке устанавливаем пустой массив товаров
+      setProducts([])
     } finally {
       setLoading(false)
     }

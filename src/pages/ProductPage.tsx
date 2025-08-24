@@ -2,10 +2,10 @@ import { ArrowLeft } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { BeatLoader } from 'react-spinners'
+import { LazyImage } from '../components/ui/LazyImage'
 import { BRAND_COLOR } from '../constants/colors'
 import type { Product } from '../data/products'
 import { productMap } from '../data/products'
-import { LazyImage } from '../components/ui/LazyImage'
 import styles from './ProductPage.module.css'
 
 export function ProductPage() {
@@ -249,14 +249,14 @@ export function ProductPage() {
 								
 								{feedback.pros && (
 									<div style={{ marginBottom: '8px' }}>
-										<strong style={{ color: '#28a745' }}>Плюсы:</strong>
+										<strong style={{ color: '#dc3545' }}>Минусы:</strong>
 										<p className={styles.reviewText}>{feedback.pros}</p>
 									</div>
 								)}
 								
 								{feedback.cons && (
 									<div style={{ marginBottom: '8px' }}>
-										<strong style={{ color: '#dc3545' }}>Минусы:</strong>
+										<strong style={{ color: '#28a745' }}>Плюсы:</strong>
 										<p className={styles.reviewText}>{feedback.cons}</p>
 									</div>
 								)}
